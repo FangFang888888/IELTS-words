@@ -116,6 +116,12 @@
   .accents{display:flex;gap:10px;margin:12px 0 2px}
   .accbtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:9px 16px;font-size:14px;cursor:pointer}
   .accbtn:active{transform:scale(.97)}
+  .zhbox{margin:18px 0 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+  .zhbox summary{cursor:pointer;color:var(--muted);font-size:13px;list-style:none}
+  .zhbox summary::-webkit-details-marker{display:none}
+  .zhbox summary::before{content:'▸ ';color:var(--accent)}
+  .zhbox[open] summary::before{content:'▾ '}
+  .zhbox p{margin:10px 0 2px;font-size:15px;line-height:1.8;color:var(--text)}
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#332b24;color:#f6ecdf;border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-size:13px;z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;max-width:80vw;text-align:center}
   .toast.show{opacity:1}
 </style>
@@ -154,231 +160,3509 @@
 /* ==DATA-START== */
 const GOAL_STORIES = 5;    // 每日下限：5 篇 = 100 词
 const STORIES = [
-{
-  id:'S01', title:'The Last Orbit', meta:'雅思 · 20 词',
-  words:{
-    Japanese:{short:'adj. 日本的', ipa:'/ˌdʒæpəˈniːz/', senses:[{pos:'adj./n.',zh:'日本的；日本人'}]},
-    solitary:{short:'adj. 孤独', ipa:'/ˈsɒlətri/', senses:[{pos:'adj.',zh:'独自的，孤独的'}]},
-    slim:{short:'adj. 纤细', ipa:'/slɪm/', senses:[{pos:'adj.',zh:'纤细的；微小的'}]},
-    unsocial:{short:'adj. 孤僻', ipa:'/ˌʌnˈsəʊʃl/', senses:[{pos:'adj.',zh:'不爱交际的'}]},
-    cosmic:{short:'adj. 宇宙', ipa:'/ˈkɒzmɪk/', senses:[{pos:'adj.',zh:'宇宙的'}]},
-    inhabit:{short:'v. 栖居', ipa:'/ɪnˈhæbɪt/', senses:[{pos:'v.',zh:'居住于，栖居于'}]},
-    doctrine:{short:'n. 信条', ipa:'/ˈdɒktrɪn/', senses:[{pos:'n.',zh:'教义，信条'}]},
-    fraught:{short:'adj. 充满', ipa:'/frɔːt/', senses:[{pos:'adj.',zh:'充满（问题、危险）的'}]},
-    reimburse:{short:'v. 报销', ipa:'/ˌriːɪmˈbɜːs/', senses:[{pos:'v.',zh:'报销，偿还'}]},
-    options:{short:'n. 选项', ipa:'/ˈɒpʃnz/', senses:[{pos:'n.',zh:'选择，选项（option 的复数）'}]},
-    imperative:{short:'adj. 必要', ipa:'/ɪmˈperətɪv/', senses:[{pos:'adj.',zh:'迫切的，必要的'}]},
-    fingers:{short:'n. 手指', ipa:'/ˈfɪŋɡəz/', senses:[{pos:'n.',zh:'手指（finger 的复数）'}]},
-    blink:{short:'v. 眨眼', ipa:'/blɪŋk/', senses:[{pos:'v.',zh:'眨眼'}]},
-    metaphor:{short:'n. 隐喻', ipa:'/ˈmetəfə/', senses:[{pos:'n.',zh:'隐喻，比喻'}]},
-    applaud:{short:'v. 称赞', ipa:'/əˈplɔːd/', senses:[{pos:'v.',zh:'鼓掌；称赞'}]},
-    ornament:{short:'n. 饰品', ipa:'/ˈɔːnəmənt/', senses:[{pos:'n.',zh:'装饰品'}]},
-    refund:{short:'n. 退款', ipa:'/ˈriːfʌnd/', senses:[{pos:'n./v.',zh:'退款；退还'}]},
-    expulsion:{short:'n. 开除', ipa:'/ɪkˈspʌlʃn/', senses:[{pos:'n.',zh:'驱逐，开除'}]},
-    dispose:{short:'v. 处理', ipa:'/dɪˈspəʊz/', senses:[{pos:'v.',zh:'处理，丢弃（dispose of）'}]},
-    sting:{short:'n. 刺痛', ipa:'/stɪŋ/', senses:[{pos:'n./v.',zh:'刺痛；刺'}]}
+ {
+  "id": "S01",
+  "title": "The Last Orbit",
+  "meta": "雅思 · 20 词",
+  "zh": "一个日本天文学家独自守在小岛天文台，赌上仪器保住了一次宇宙风暴的数据。",
+  "words": {
+   "Japanese": {
+    "short": "adj. 日本的",
+    "ipa": "/ˌdʒæpəˈniːz/",
+    "senses": [
+     {
+      "pos": "adj./n.",
+      "zh": "日本的；日本人"
+     }
+    ]
+   },
+   "solitary": {
+    "short": "adj. 孤独",
+    "ipa": "/ˈsɒlətri/",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "独自的，孤独的"
+     }
+    ]
+   },
+   "slim": {
+    "short": "adj. 纤细",
+    "ipa": "/slɪm/",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "纤细的；微小的"
+     }
+    ]
+   },
+   "unsocial": {
+    "short": "adj. 孤僻",
+    "ipa": "/ˌʌnˈsəʊʃl/",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "不爱交际的"
+     }
+    ]
+   },
+   "cosmic": {
+    "short": "adj. 宇宙",
+    "ipa": "/ˈkɒzmɪk/",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "宇宙的"
+     }
+    ]
+   },
+   "inhabit": {
+    "short": "v. 栖居",
+    "ipa": "/ɪnˈhæbɪt/",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "居住于，栖居于"
+     }
+    ]
+   },
+   "doctrine": {
+    "short": "n. 信条",
+    "ipa": "/ˈdɒktrɪn/",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "教义，信条"
+     }
+    ]
+   },
+   "fraught": {
+    "short": "adj. 充满",
+    "ipa": "/frɔːt/",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "充满（问题、危险）的"
+     }
+    ]
+   },
+   "reimburse": {
+    "short": "v. 报销",
+    "ipa": "/ˌriːɪmˈbɜːs/",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "报销，偿还"
+     }
+    ]
+   },
+   "options": {
+    "short": "n. 选项",
+    "ipa": "/ˈɒpʃnz/",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "选择，选项（option 的复数）"
+     }
+    ]
+   },
+   "imperative": {
+    "short": "adj. 必要",
+    "ipa": "/ɪmˈperətɪv/",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "迫切的，必要的"
+     }
+    ]
+   },
+   "fingers": {
+    "short": "n. 手指",
+    "ipa": "/ˈfɪŋɡəz/",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "手指（finger 的复数）"
+     }
+    ]
+   },
+   "blink": {
+    "short": "v. 眨眼",
+    "ipa": "/blɪŋk/",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "眨眼"
+     }
+    ]
+   },
+   "metaphor": {
+    "short": "n. 隐喻",
+    "ipa": "/ˈmetəfə/",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "隐喻，比喻"
+     }
+    ]
+   },
+   "applaud": {
+    "short": "v. 称赞",
+    "ipa": "/əˈplɔːd/",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "鼓掌；称赞"
+     }
+    ]
+   },
+   "ornament": {
+    "short": "n. 饰品",
+    "ipa": "/ˈɔːnəmənt/",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "装饰品"
+     }
+    ]
+   },
+   "refund": {
+    "short": "n. 退款",
+    "ipa": "/ˈriːfʌnd/",
+    "senses": [
+     {
+      "pos": "n./v.",
+      "zh": "退款；退还"
+     }
+    ]
+   },
+   "expulsion": {
+    "short": "n. 开除",
+    "ipa": "/ɪkˈspʌlʃn/",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "驱逐，开除"
+     }
+    ]
+   },
+   "dispose": {
+    "short": "v. 处理",
+    "ipa": "/dɪˈspəʊz/",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "处理，丢弃（dispose of）"
+     }
+    ]
+   },
+   "sting": {
+    "short": "n. 刺痛",
+    "ipa": "/stɪŋ/",
+    "senses": [
+     {
+      "pos": "n./v.",
+      "zh": "刺痛；刺"
+     }
+    ]
+   }
   },
-  paras:[
-    "Dr. Ito, a {Japanese} astronomer, took a {solitary} post on a {slim} island. Her neighbours called her {unsocial}, but she was only busy: the sky there was the clearest place to watch a {cosmic} storm that might {inhabit} it for weeks.",
-    "The station ran on one {doctrine}: measure, write, repeat. The week was {fraught} with small failures — a cracked lens, a dead radio, a bill she had to {reimburse} from her own pocket.",
-    "When the storm came, she had two {options}: close the dome and lose the data, or keep it open and risk the lens. It was {imperative} to decide fast. She counted to ten on her {fingers}, did not {blink}, and kept it open.",
-    "The storm passed like a {metaphor} for luck. Later the university would {applaud} her, hang a silver {ornament} in the hall, and send a {refund} for the lens she had paid for herself — though no money could erase the {expulsion} threat that had once hung over her contract.",
-    "She never learned to {dispose} of that old lens. It sits in the corner, and once a year it gives her a small {sting}: the memory of how close she came to quitting."
+  "paras": [
+   "Dr. Ito, a {Japanese} astronomer, took a {solitary} post on a {slim} island. Her neighbours called her {unsocial}, but she was only busy: the sky there was the clearest place to watch a {cosmic} storm that might {inhabit} it for weeks.",
+   "The station ran on one {doctrine}: measure, write, repeat. The week was {fraught} with small failures — a cracked lens, a dead radio, a bill she had to {reimburse} from her own pocket.",
+   "When the storm came, she had two {options}: close the dome and lose the data, or keep it open and risk the lens. It was {imperative} to decide fast. She counted to ten on her {fingers}, did not {blink}, and kept it open.",
+   "The storm passed like a {metaphor} for luck. Later the university would {applaud} her, hang a silver {ornament} in the hall, and send a {refund} for the lens she had paid for herself — though no money could erase the {expulsion} threat that had once hung over her contract.",
+   "She never learned to {dispose} of that old lens. It sits in the corner, and once a year it gives her a small {sting}: the memory of how close she came to quitting."
   ],
-  cards:[['inhabit','居住于，栖居于'],['fraught','充满（问题、危险）的'],['unsocial','不爱交际的'],['slim','纤细的；微小的'],['applaud','鼓掌；称赞'],['doctrine','教义，信条'],['solitary','独自的，孤独的'],['cosmic','宇宙的'],['reimburse','报销，偿还'],['options','选择，选项'],['fingers','手指'],['imperative','迫切的，必要的'],['Japanese','日本的；日本人'],['blink','眨眼'],['ornament','装饰品'],['expulsion','驱逐，开除'],['refund','退款'],['metaphor','隐喻，比喻'],['dispose','处理，丢弃'],['sting','刺痛；刺']],
-  fills:[
-    {text:'Dr. Ito, a {0} astronomer, took a {1} post on a slim island.', a:['Japanese','solitary']},
-    {text:'Her neighbours called her {0}, but she was only busy watching a {1} storm.', a:['unsocial','cosmic']},
-    {text:'The storm might {0} the sky for weeks; the chance of good data was {1}.', a:['inhabit','slim']},
-    {text:'The station ran on one {0}: measure, write, repeat — and the week was {1} with small failures.', a:['doctrine','fraught']},
-    {text:'She had to {0} a bill from her own pocket, and when the storm came she had two {1}.', a:['reimburse','options']},
-    {text:'It was {0} to decide fast; she counted to ten on her {1}.', a:['imperative','fingers']},
-    {text:'She did not {0}, and the storm passed like a {1} for luck.', a:['blink','metaphor']},
-    {text:'Later the university would {0} her and hang a silver {1} in the hall.', a:['applaud','ornament']},
-    {text:'No money could erase the {0} threat; they only sent a {1} for the lens.', a:['expulsion','refund']},
-    {text:'She never learned to {0} of that old lens, and once a year it gave her a small {1}.', a:['dispose','sting']}
+  "cards": [
+   [
+    "inhabit",
+    "居住于，栖居于"
+   ],
+   [
+    "fraught",
+    "充满（问题、危险）的"
+   ],
+   [
+    "unsocial",
+    "不爱交际的"
+   ],
+   [
+    "slim",
+    "纤细的；微小的"
+   ],
+   [
+    "applaud",
+    "鼓掌；称赞"
+   ],
+   [
+    "doctrine",
+    "教义，信条"
+   ],
+   [
+    "solitary",
+    "独自的，孤独的"
+   ],
+   [
+    "cosmic",
+    "宇宙的"
+   ],
+   [
+    "reimburse",
+    "报销，偿还"
+   ],
+   [
+    "options",
+    "选择，选项"
+   ],
+   [
+    "fingers",
+    "手指"
+   ],
+   [
+    "imperative",
+    "迫切的，必要的"
+   ],
+   [
+    "Japanese",
+    "日本的；日本人"
+   ],
+   [
+    "blink",
+    "眨眼"
+   ],
+   [
+    "ornament",
+    "装饰品"
+   ],
+   [
+    "expulsion",
+    "驱逐，开除"
+   ],
+   [
+    "refund",
+    "退款"
+   ],
+   [
+    "metaphor",
+    "隐喻，比喻"
+   ],
+   [
+    "dispose",
+    "处理，丢弃"
+   ],
+   [
+    "sting",
+    "刺痛；刺"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "Dr. Ito, a {0} astronomer, took a {1} post on a slim island.",
+    "a": [
+     "Japanese",
+     "solitary"
+    ]
+   },
+   {
+    "text": "Her neighbours called her {0}, but she was only busy watching a {1} storm.",
+    "a": [
+     "unsocial",
+     "cosmic"
+    ]
+   },
+   {
+    "text": "The storm might {0} the sky for weeks; the chance of good data was {1}.",
+    "a": [
+     "inhabit",
+     "slim"
+    ]
+   },
+   {
+    "text": "The station ran on one {0}: measure, write, repeat — and the week was {1} with small failures.",
+    "a": [
+     "doctrine",
+     "fraught"
+    ]
+   },
+   {
+    "text": "She had to {0} a bill from her own pocket, and when the storm came she had two {1}.",
+    "a": [
+     "reimburse",
+     "options"
+    ]
+   },
+   {
+    "text": "It was {0} to decide fast; she counted to ten on her {1}.",
+    "a": [
+     "imperative",
+     "fingers"
+    ]
+   },
+   {
+    "text": "She did not {0}, and the storm passed like a {1} for luck.",
+    "a": [
+     "blink",
+     "metaphor"
+    ]
+   },
+   {
+    "text": "Later the university would {0} her and hang a silver {1} in the hall.",
+    "a": [
+     "applaud",
+     "ornament"
+    ]
+   },
+   {
+    "text": "No money could erase the {0} threat; they only sent a {1} for the lens.",
+    "a": [
+     "expulsion",
+     "refund"
+    ]
+   },
+   {
+    "text": "She never learned to {0} of that old lens, and once a year it gave her a small {1}.",
+    "a": [
+     "dispose",
+     "sting"
+    ]
+   }
   ]
-},
-{
-  id:'S02', title:'The Salt Machine', meta:'雅思 · 20 词',
-  words:{
-    saline:{short:'adj. 含盐', senses:[{pos:'adj.',zh:'含盐的，咸的'}]},
-    elder:{short:'n. 长者', senses:[{pos:'n.',zh:'长者，年长者'}]},
-    zest:{short:'n. 热情', senses:[{pos:'n.',zh:'热情，兴致'}]},
-    daily:{short:'adj. 每日', senses:[{pos:'adj.',zh:'每日的，日常的'}]},
-    shepherd:{short:'n. 牧羊人', senses:[{pos:'n.',zh:'牧羊人'}]},
-    slit:{short:'n. 狭缝', senses:[{pos:'n.',zh:'狭缝；v. 切开'}]},
-    general:{short:'adj. 全体', senses:[{pos:'adj.',zh:'全体的，总的'}]},
-    launch:{short:'v. 发起', senses:[{pos:'v.',zh:'发起，推出'}]},
-    training:{short:'n. 培训', senses:[{pos:'n.',zh:'培训，训练'}]},
-    condition:{short:'n. 条件', senses:[{pos:'n.',zh:'条件'}]},
-    studies:{short:'n. 学业', senses:[{pos:'n.',zh:'学业，研究（study 的复数）'}]},
-    tedious:{short:'adj. 乏味', senses:[{pos:'adj.',zh:'乏味的，单调的'}]},
-    expectancy:{short:'n. 期待', senses:[{pos:'n.',zh:'期待，预期'}]},
-    anonymous:{short:'adj. 匿名', senses:[{pos:'adj.',zh:'匿名的'}]},
-    monstrous:{short:'adj. 巨大', senses:[{pos:'adj.',zh:'巨大的；骇人的'}]},
-    formidable:{short:'adj. 强大', senses:[{pos:'adj.',zh:'强大的，令人敬畏的'}]},
-    type:{short:'n. 类型', senses:[{pos:'n.',zh:'类型，种类'}]},
-    lavish:{short:'adj. 奢华', senses:[{pos:'adj.',zh:'奢华的；v. 挥霍'}]},
-    original:{short:'adj. 原创', senses:[{pos:'adj.',zh:'原创的，最初的'}]},
-    leisure:{short:'n. 闲暇', senses:[{pos:'n.',zh:'闲暇，空闲'}]}
+ },
+ {
+  "id": "S02",
+  "title": "The Salt Machine",
+  "meta": "雅思 · 20 词",
+  "zh": "盐碱地上的村子买了台大机器，却没人会开——工具买了，功课没做。",
+  "words": {
+   "saline": {
+    "short": "adj. 含盐",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "含盐的，咸的"
+     }
+    ]
+   },
+   "elder": {
+    "short": "n. 长者",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "长者，年长者"
+     }
+    ]
+   },
+   "zest": {
+    "short": "n. 热情",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "热情，兴致"
+     }
+    ]
+   },
+   "daily": {
+    "short": "adj. 每日",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "每日的，日常的"
+     }
+    ]
+   },
+   "shepherd": {
+    "short": "n. 牧羊人",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "牧羊人"
+     }
+    ]
+   },
+   "slit": {
+    "short": "n. 狭缝",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "狭缝；v. 切开"
+     }
+    ]
+   },
+   "general": {
+    "short": "adj. 全体",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "全体的，总的"
+     }
+    ]
+   },
+   "launch": {
+    "short": "v. 发起",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "发起，推出"
+     }
+    ]
+   },
+   "training": {
+    "short": "n. 培训",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "培训，训练"
+     }
+    ]
+   },
+   "condition": {
+    "short": "n. 条件",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "条件"
+     }
+    ]
+   },
+   "studies": {
+    "short": "n. 学业",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "学业，研究（study 的复数）"
+     }
+    ]
+   },
+   "tedious": {
+    "short": "adj. 乏味",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "乏味的，单调的"
+     }
+    ]
+   },
+   "expectancy": {
+    "short": "n. 期待",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "期待，预期"
+     }
+    ]
+   },
+   "anonymous": {
+    "short": "adj. 匿名",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "匿名的"
+     }
+    ]
+   },
+   "monstrous": {
+    "short": "adj. 巨大",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "巨大的；骇人的"
+     }
+    ]
+   },
+   "formidable": {
+    "short": "adj. 强大",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "强大的，令人敬畏的"
+     }
+    ]
+   },
+   "type": {
+    "short": "n. 类型",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "类型，种类"
+     }
+    ]
+   },
+   "lavish": {
+    "short": "adj. 奢华",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "奢华的；v. 挥霍"
+     }
+    ]
+   },
+   "original": {
+    "short": "adj. 原创",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "原创的，最初的"
+     }
+    ]
+   },
+   "leisure": {
+    "short": "n. 闲暇",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "闲暇，空闲"
+     }
+    ]
+   }
   },
-  paras:[
-    "The village lay on {saline} soil, and the {elder} who kept the sheep was the only one with {zest} left. Every {daily} round he walked the marsh with his {shepherd}'s stick, past a {slit} in the fence that nobody mended.",
-    "A {general} meeting was called: the council wanted to {launch} a {training} programme for young farmers. The {condition} was simple — finish the {studies} first. They were {tedious}, and {expectancy} turned to boredom by the third week.",
-    "Then an {anonymous} donor paid for a {monstrous} machine that could cut salt grass. It was a {formidable} thing, and its {type} was unlike anything in the valley. The council threw a {lavish} party, with {original} songs written for the night.",
-    "But in the morning the machine sat in the {leisure} of the yard, useless: nobody had been trained to run it. The elder laughed. 'Buy the tool, skip the work,' he said, and went back to his sheep."
+  "paras": [
+   "The village lay on {saline} soil, and the {elder} who kept the sheep was the only one with {zest} left. Every {daily} round he walked the marsh with his {shepherd}'s stick, past a {slit} in the fence that nobody mended.",
+   "A {general} meeting was called: the council wanted to {launch} a {training} programme for young farmers. The {condition} was simple — finish the {studies} first. They were {tedious}, and {expectancy} turned to boredom by the third week.",
+   "Then an {anonymous} donor paid for a {monstrous} machine that could cut salt grass. It was a {formidable} thing, and its {type} was unlike anything in the valley. The council threw a {lavish} party, with {original} songs written for the night.",
+   "But in the morning the machine sat in the {leisure} of the yard, useless: nobody had been trained to run it. The elder laughed. 'Buy the tool, skip the work,' he said, and went back to his sheep."
   ],
-  cards:[['saline','含盐的'],['elder','长者'],['zest','热情'],['daily','每日的'],['shepherd','牧羊人'],['slit','狭缝'],['general','全体的'],['launch','发起'],['training','培训'],['condition','条件'],['studies','学业'],['tedious','乏味的'],['expectancy','期待'],['anonymous','匿名的'],['monstrous','巨大的'],['formidable','强大的'],['type','类型'],['lavish','奢华的'],['original','原创的'],['leisure','闲暇']],
-  fills:[
-    {text:'The village lay on {0} soil, and the {1} who kept the sheep was the only one with zest left.', a:['saline','elder']},
-    {text:'Every {0} round he walked the marsh with his {1}\u2019s stick.', a:['daily','shepherd']},
-    {text:'He walked past a {0} in the fence that nobody mended; a {1} meeting was called.', a:['slit','general']},
-    {text:'The council wanted to {0} a {1} programme for young farmers.', a:['launch','training']},
-    {text:'The {0} was simple — finish the {1} first.', a:['condition','studies']},
-    {text:'They were {0}, and {1} turned to boredom by the third week.', a:['tedious','expectancy']},
-    {text:'Then an {0} donor paid for a {1} machine that could cut salt grass.', a:['anonymous','monstrous']},
-    {text:'It was a {0} thing, and its {1} was unlike anything in the valley.', a:['formidable','type']},
-    {text:'The council threw a {0} party, with {1} songs written for the night.', a:['lavish','original']},
-    {text:'In the {0} of the yard the machine sat useless, and the elder still had all the {1}.', a:['leisure','zest']}
+  "cards": [
+   [
+    "saline",
+    "含盐的"
+   ],
+   [
+    "elder",
+    "长者"
+   ],
+   [
+    "zest",
+    "热情"
+   ],
+   [
+    "daily",
+    "每日的"
+   ],
+   [
+    "shepherd",
+    "牧羊人"
+   ],
+   [
+    "slit",
+    "狭缝"
+   ],
+   [
+    "general",
+    "全体的"
+   ],
+   [
+    "launch",
+    "发起"
+   ],
+   [
+    "training",
+    "培训"
+   ],
+   [
+    "condition",
+    "条件"
+   ],
+   [
+    "studies",
+    "学业"
+   ],
+   [
+    "tedious",
+    "乏味的"
+   ],
+   [
+    "expectancy",
+    "期待"
+   ],
+   [
+    "anonymous",
+    "匿名的"
+   ],
+   [
+    "monstrous",
+    "巨大的"
+   ],
+   [
+    "formidable",
+    "强大的"
+   ],
+   [
+    "type",
+    "类型"
+   ],
+   [
+    "lavish",
+    "奢华的"
+   ],
+   [
+    "original",
+    "原创的"
+   ],
+   [
+    "leisure",
+    "闲暇"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The village lay on {0} soil, and the {1} who kept the sheep was the only one with zest left.",
+    "a": [
+     "saline",
+     "elder"
+    ]
+   },
+   {
+    "text": "Every {0} round he walked the marsh with his {1}’s stick.",
+    "a": [
+     "daily",
+     "shepherd"
+    ]
+   },
+   {
+    "text": "He walked past a {0} in the fence that nobody mended; a {1} meeting was called.",
+    "a": [
+     "slit",
+     "general"
+    ]
+   },
+   {
+    "text": "The council wanted to {0} a {1} programme for young farmers.",
+    "a": [
+     "launch",
+     "training"
+    ]
+   },
+   {
+    "text": "The {0} was simple — finish the {1} first.",
+    "a": [
+     "condition",
+     "studies"
+    ]
+   },
+   {
+    "text": "They were {0}, and {1} turned to boredom by the third week.",
+    "a": [
+     "tedious",
+     "expectancy"
+    ]
+   },
+   {
+    "text": "Then an {0} donor paid for a {1} machine that could cut salt grass.",
+    "a": [
+     "anonymous",
+     "monstrous"
+    ]
+   },
+   {
+    "text": "It was a {0} thing, and its {1} was unlike anything in the valley.",
+    "a": [
+     "formidable",
+     "type"
+    ]
+   },
+   {
+    "text": "The council threw a {0} party, with {1} songs written for the night.",
+    "a": [
+     "lavish",
+     "original"
+    ]
+   },
+   {
+    "text": "In the {0} of the yard the machine sat useless, and the elder still had all the {1}.",
+    "a": [
+     "leisure",
+     "zest"
+    ]
+   }
   ]
-},
-{
-  id:'S03', title:'Fifty Years of Signal', meta:'雅思 · 20 词',
-  words:{
-    radio:{short:'n. 电台', senses:[{pos:'n.',zh:'收音机；电台'}]},
-    industrial:{short:'adj. 工业', senses:[{pos:'adj.',zh:'工业的'}]},
-    forte:{short:'n. 长处', senses:[{pos:'n.',zh:'长处，强项'}]},
-    occasion:{short:'n. 场合', senses:[{pos:'n.',zh:'场合，时刻'}]},
-    vehement:{short:'adj. 激烈', senses:[{pos:'adj.',zh:'激烈的，强烈的'}]},
-    improvement:{short:'n. 改善', senses:[{pos:'n.',zh:'改善，改进'}]},
-    repetition:{short:'n. 重复', senses:[{pos:'n.',zh:'重复'}]},
-    corrode:{short:'v. 腐蚀', senses:[{pos:'v.',zh:'腐蚀，侵蚀'}]},
-    drain:{short:'v. 排水', senses:[{pos:'v.',zh:'排水；n. 下水道'}]},
-    pump:{short:'n. 泵', senses:[{pos:'n.',zh:'泵，抽水机'}]},
-    cable:{short:'n. 电缆', senses:[{pos:'n.',zh:'电缆，缆绳'}]},
-    blast:{short:'n. 一阵', senses:[{pos:'n.',zh:'一阵（强风、水流）；爆炸'}]},
-    appendix:{short:'n. 附录', senses:[{pos:'n.',zh:'附录；阑尾'}]},
-    financial:{short:'adj. 财务', senses:[{pos:'adj.',zh:'财务的，金融的'}]},
-    assess:{short:'v. 评估', senses:[{pos:'v.',zh:'评估，估算'}]},
-    diplomas:{short:'n. 文凭', senses:[{pos:'n.',zh:'文凭（diploma 的复数）'}]},
-    obnoxious:{short:'adj. 讨厌', senses:[{pos:'adj.',zh:'讨厌的，令人不快的'}]},
-    hold:{short:'n. 掌控', senses:[{pos:'n.',zh:'掌控，影响；v. 握住'}]},
-    satisfaction:{short:'n. 满足', senses:[{pos:'n.',zh:'满足，满意'}]},
-    Africa:{short:'n. 非洲', senses:[{pos:'n.',zh:'非洲'}]}
+ },
+ {
+  "id": "S03",
+  "title": "Fifty Years of Signal",
+  "meta": "雅思 · 20 词",
+  "zh": "工业小镇的电台记录了一场五十周年演讲，也顺手救下了爆裂的水管。",
+  "words": {
+   "radio": {
+    "short": "n. 电台",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "收音机；电台"
+     }
+    ]
+   },
+   "industrial": {
+    "short": "adj. 工业",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "工业的"
+     }
+    ]
+   },
+   "forte": {
+    "short": "n. 长处",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "长处，强项"
+     }
+    ]
+   },
+   "occasion": {
+    "short": "n. 场合",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "场合，时刻"
+     }
+    ]
+   },
+   "vehement": {
+    "short": "adj. 激烈",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "激烈的，强烈的"
+     }
+    ]
+   },
+   "improvement": {
+    "short": "n. 改善",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "改善，改进"
+     }
+    ]
+   },
+   "repetition": {
+    "short": "n. 重复",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "重复"
+     }
+    ]
+   },
+   "corrode": {
+    "short": "v. 腐蚀",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "腐蚀，侵蚀"
+     }
+    ]
+   },
+   "drain": {
+    "short": "v. 排水",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "排水；n. 下水道"
+     }
+    ]
+   },
+   "pump": {
+    "short": "n. 泵",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "泵，抽水机"
+     }
+    ]
+   },
+   "cable": {
+    "short": "n. 电缆",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "电缆，缆绳"
+     }
+    ]
+   },
+   "blast": {
+    "short": "n. 一阵",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "一阵（强风、水流）；爆炸"
+     }
+    ]
+   },
+   "appendix": {
+    "short": "n. 附录",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "附录；阑尾"
+     }
+    ]
+   },
+   "financial": {
+    "short": "adj. 财务",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "财务的，金融的"
+     }
+    ]
+   },
+   "assess": {
+    "short": "v. 评估",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "评估，估算"
+     }
+    ]
+   },
+   "diplomas": {
+    "short": "n. 文凭",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "文凭（diploma 的复数）"
+     }
+    ]
+   },
+   "obnoxious": {
+    "short": "adj. 讨厌",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "讨厌的，令人不快的"
+     }
+    ]
+   },
+   "hold": {
+    "short": "n. 掌控",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "掌控，影响；v. 握住"
+     }
+    ]
+   },
+   "satisfaction": {
+    "short": "n. 满足",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "满足，满意"
+     }
+    ]
+   },
+   "Africa": {
+    "short": "n. 非洲",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "非洲"
+     }
+    ]
+   }
   },
-  paras:[
-    "The {radio} station in the {industrial} town had one {forte}: it never hung up on anyone. On the {occasion} of the plant's fiftieth year, the mayor gave a {vehement} speech about {improvement}, and the station recorded every {repetition} of it.",
-    "Behind the studio, pipes had begun to {corrode}, and salt water would {drain} into the yard. An engineer fixed a {pump} and a new {cable}, and the {blast} of water soaked the {appendix} of his report — three pages of figures on the town's {financial} state.",
-    "He had to {assess} the damage alone. His {diplomas} hung above the desk, but his real skill was patience: he counted every fault until the numbers held. The {obnoxious} neighbour who called him daily got no {hold} on him.",
-    "By evening the yard was dry, and he felt a quiet {satisfaction}. Somewhere south of {Africa}, he wrote, the same pump was working; here it had simply been forgotten."
+  "paras": [
+   "The {radio} station in the {industrial} town had one {forte}: it never hung up on anyone. On the {occasion} of the plant's fiftieth year, the mayor gave a {vehement} speech about {improvement}, and the station recorded every {repetition} of it.",
+   "Behind the studio, pipes had begun to {corrode}, and salt water would {drain} into the yard. An engineer fixed a {pump} and a new {cable}, and the {blast} of water soaked the {appendix} of his report — three pages of figures on the town's {financial} state.",
+   "He had to {assess} the damage alone. His {diplomas} hung above the desk, but his real skill was patience: he counted every fault until the numbers held. The {obnoxious} neighbour who called him daily got no {hold} on him.",
+   "By evening the yard was dry, and he felt a quiet {satisfaction}. Somewhere south of {Africa}, he wrote, the same pump was working; here it had simply been forgotten."
   ],
-  cards:[['radio','电台'],['industrial','工业的'],['forte','长处'],['occasion','场合'],['vehement','激烈的'],['improvement','改善'],['repetition','重复'],['corrode','腐蚀'],['drain','排水'],['pump','泵'],['cable','电缆'],['blast','一阵'],['appendix','附录'],['financial','财务的'],['assess','评估'],['diplomas','文凭'],['obnoxious','讨厌的'],['hold','掌控'],['satisfaction','满足'],['Africa','非洲']],
-  fills:[
-    {text:'The {0} station in the {1} town had one forte.', a:['radio','industrial']},
-    {text:'Its {0} was simple, and on the {1} of the plant\u2019s fiftieth year the mayor spoke.', a:['forte','occasion']},
-    {text:'He gave a {0} speech about {1}.', a:['vehement','improvement']},
-    {text:'The station recorded every {0} of it; behind the studio, the pipes had begun to {1}.', a:['repetition','corrode']},
-    {text:'The pipes began to {0} into the yard, so an engineer fixed a {1}.', a:['drain','pump']},
-    {text:'He added a new {0}, and the {1} of water soaked his report.', a:['cable','blast']},
-    {text:'It soaked the {0} of the report — three pages on the town\u2019s {1} state.', a:['appendix','financial']},
-    {text:'He had to {0} the damage alone; his {1} hung above the desk.', a:['assess','diplomas']},
-    {text:'The {0} neighbour who called daily got no {1} on him.', a:['obnoxious','hold']},
-    {text:'By evening he felt a quiet {0}; somewhere south of {1} the same pump was working.', a:['satisfaction','Africa']}
+  "cards": [
+   [
+    "radio",
+    "电台"
+   ],
+   [
+    "industrial",
+    "工业的"
+   ],
+   [
+    "forte",
+    "长处"
+   ],
+   [
+    "occasion",
+    "场合"
+   ],
+   [
+    "vehement",
+    "激烈的"
+   ],
+   [
+    "improvement",
+    "改善"
+   ],
+   [
+    "repetition",
+    "重复"
+   ],
+   [
+    "corrode",
+    "腐蚀"
+   ],
+   [
+    "drain",
+    "排水"
+   ],
+   [
+    "pump",
+    "泵"
+   ],
+   [
+    "cable",
+    "电缆"
+   ],
+   [
+    "blast",
+    "一阵"
+   ],
+   [
+    "appendix",
+    "附录"
+   ],
+   [
+    "financial",
+    "财务的"
+   ],
+   [
+    "assess",
+    "评估"
+   ],
+   [
+    "diplomas",
+    "文凭"
+   ],
+   [
+    "obnoxious",
+    "讨厌的"
+   ],
+   [
+    "hold",
+    "掌控"
+   ],
+   [
+    "satisfaction",
+    "满足"
+   ],
+   [
+    "Africa",
+    "非洲"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The {0} station in the {1} town had one forte.",
+    "a": [
+     "radio",
+     "industrial"
+    ]
+   },
+   {
+    "text": "Its {0} was simple, and on the {1} of the plant’s fiftieth year the mayor spoke.",
+    "a": [
+     "forte",
+     "occasion"
+    ]
+   },
+   {
+    "text": "He gave a {0} speech about {1}.",
+    "a": [
+     "vehement",
+     "improvement"
+    ]
+   },
+   {
+    "text": "The station recorded every {0} of it; behind the studio, the pipes had begun to {1}.",
+    "a": [
+     "repetition",
+     "corrode"
+    ]
+   },
+   {
+    "text": "The pipes began to {0} into the yard, so an engineer fixed a {1}.",
+    "a": [
+     "drain",
+     "pump"
+    ]
+   },
+   {
+    "text": "He added a new {0}, and the {1} of water soaked his report.",
+    "a": [
+     "cable",
+     "blast"
+    ]
+   },
+   {
+    "text": "It soaked the {0} of the report — three pages on the town’s {1} state.",
+    "a": [
+     "appendix",
+     "financial"
+    ]
+   },
+   {
+    "text": "He had to {0} the damage alone; his {1} hung above the desk.",
+    "a": [
+     "assess",
+     "diplomas"
+    ]
+   },
+   {
+    "text": "The {0} neighbour who called daily got no {1} on him.",
+    "a": [
+     "obnoxious",
+     "hold"
+    ]
+   },
+   {
+    "text": "By evening he felt a quiet {0}; somewhere south of {1} the same pump was working.",
+    "a": [
+     "satisfaction",
+     "Africa"
+    ]
+   }
   ]
-},
-{
-  id:'S04', title:'A Room on the Cape', meta:'雅思 · 20 词',
-  words:{
-    forecast:{short:'n. 预报', senses:[{pos:'n.',zh:'预报，预测'}]},
-    cape:{short:'n. 海角', senses:[{pos:'n.',zh:'海角，岬'}]},
-    receptionist:{short:'n. 前台', senses:[{pos:'n.',zh:'接待员，前台'}]},
-    blouse:{short:'n. 女衬衫', senses:[{pos:'n.',zh:'女衬衫'}]},
-    perfect:{short:'adj. 完美', senses:[{pos:'adj.',zh:'完美的'}]},
-    berth:{short:'n. 铺位', senses:[{pos:'n.',zh:'铺位，泊位'}]},
-    levy:{short:'n. 征税', senses:[{pos:'n.',zh:'征税；v. 征收'}]},
-    supplementary:{short:'adj. 补充', senses:[{pos:'adj.',zh:'补充的，附加的'}]},
-    imperial:{short:'adj. 帝国', senses:[{pos:'adj.',zh:'帝国的，威严的'}]},
-    sample:{short:'n. 样品', senses:[{pos:'n.',zh:'样品，试样'}]},
-    martial:{short:'adj. 武术', senses:[{pos:'adj.',zh:'武术的，军事的'}]},
-    stereotype:{short:'n. 刻板印象', senses:[{pos:'n.',zh:'刻板印象'}]},
-    care:{short:'n. 在意', senses:[{pos:'n.',zh:'在意，关心；v. 在乎'}]},
-    simultaneous:{short:'adj. 同时', senses:[{pos:'adj.',zh:'同时发生的'}]},
-    incongruous:{short:'adj. 不协调', senses:[{pos:'adj.',zh:'不协调的，格格不入的'}]},
-    scent:{short:'n. 气味', senses:[{pos:'n.',zh:'气味，香味'}]},
-    dissipate:{short:'v. 消散', senses:[{pos:'v.',zh:'消散，驱散'}]},
-    glow:{short:'n. 微光', senses:[{pos:'n.',zh:'微光，余晖'}]},
-    species:{short:'n. 物种', senses:[{pos:'n.',zh:'物种（单复数同形）'}]},
-    content:{short:'adj. 满足', senses:[{pos:'adj.',zh:'满足的；n. 内容'}]}
+ },
+ {
+  "id": "S04",
+  "title": "A Room on the Cape",
+  "meta": "雅思 · 20 词",
+  "zh": "海角旅馆的一夜：征税、 cider、一场武术课，和一个什么都不用做的晚上。",
+  "words": {
+   "forecast": {
+    "short": "n. 预报",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "预报，预测"
+     }
+    ]
+   },
+   "cape": {
+    "short": "n. 海角",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "海角，岬"
+     }
+    ]
+   },
+   "receptionist": {
+    "short": "n. 前台",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "接待员，前台"
+     }
+    ]
+   },
+   "blouse": {
+    "short": "n. 女衬衫",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "女衬衫"
+     }
+    ]
+   },
+   "perfect": {
+    "short": "adj. 完美",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "完美的"
+     }
+    ]
+   },
+   "berth": {
+    "short": "n. 铺位",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "铺位，泊位"
+     }
+    ]
+   },
+   "levy": {
+    "short": "n. 征税",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "征税；v. 征收"
+     }
+    ]
+   },
+   "supplementary": {
+    "short": "adj. 补充",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "补充的，附加的"
+     }
+    ]
+   },
+   "imperial": {
+    "short": "adj. 帝国",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "帝国的，威严的"
+     }
+    ]
+   },
+   "sample": {
+    "short": "n. 样品",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "样品，试样"
+     }
+    ]
+   },
+   "martial": {
+    "short": "adj. 武术",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "武术的，军事的"
+     }
+    ]
+   },
+   "stereotype": {
+    "short": "n. 刻板印象",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "刻板印象"
+     }
+    ]
+   },
+   "care": {
+    "short": "n. 在意",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "在意，关心；v. 在乎"
+     }
+    ]
+   },
+   "simultaneous": {
+    "short": "adj. 同时",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "同时发生的"
+     }
+    ]
+   },
+   "incongruous": {
+    "short": "adj. 不协调",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "不协调的，格格不入的"
+     }
+    ]
+   },
+   "scent": {
+    "short": "n. 气味",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "气味，香味"
+     }
+    ]
+   },
+   "dissipate": {
+    "short": "v. 消散",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "消散，驱散"
+     }
+    ]
+   },
+   "glow": {
+    "short": "n. 微光",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "微光，余晖"
+     }
+    ]
+   },
+   "species": {
+    "short": "n. 物种",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "物种（单复数同形）"
+     }
+    ]
+   },
+   "content": {
+    "short": "adj. 满足",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "满足的；n. 内容"
+     }
+    ]
+   }
   },
-  paras:[
-    "The {forecast} promised wind, and by noon the {cape} was white with it. The hotel's {receptionist}, in a blue {blouse}, took my bag and gave me a {perfect} room on the second floor — a {berth} with a window full of sea.",
-    "The town had voted for a new {levy} on tourists. '{supplementary} income,' the mayor called it, with {imperial} confidence. I paid, and a {sample} of local cider arrived with the key.",
-    "In the lounge a {martial} arts class was starting. The teacher, an old woman, broke a {stereotype} with every move: no {care} for grace, only the {simultaneous} shift of weight. It was {incongruous} with the tea cups, and completely convincing. The {scent} of salt and pine stayed in the room.",
-    "At dusk the wind began to {dissipate}, and the sea took on a {glow}. Two {species} of gull argued on the rail. My {content} was simple: one more night here, and nothing to do."
+  "paras": [
+   "The {forecast} promised wind, and by noon the {cape} was white with it. The hotel's {receptionist}, in a blue {blouse}, took my bag and gave me a {perfect} room on the second floor — a {berth} with a window full of sea.",
+   "The town had voted for a new {levy} on tourists. '{supplementary} income,' the mayor called it, with {imperial} confidence. I paid, and a {sample} of local cider arrived with the key.",
+   "In the lounge a {martial} arts class was starting. The teacher, an old woman, broke a {stereotype} with every move: no {care} for grace, only the {simultaneous} shift of weight. It was {incongruous} with the tea cups, and completely convincing. The {scent} of salt and pine stayed in the room.",
+   "At dusk the wind began to {dissipate}, and the sea took on a {glow}. Two {species} of gull argued on the rail. My {content} was simple: one more night here, and nothing to do."
   ],
-  cards:[['forecast','预报'],['cape','海角'],['receptionist','前台'],['blouse','女衬衫'],['perfect','完美的'],['berth','铺位'],['levy','征税'],['supplementary','补充的'],['imperial','帝国的'],['sample','样品'],['martial','武术的'],['stereotype','刻板印象'],['care','在意'],['simultaneous','同时的'],['incongruous','不协调的'],['scent','气味'],['dissipate','消散'],['glow','微光'],['species','物种'],['content','满足的']],
-  fills:[
-    {text:'The {0} promised wind, and by noon the {1} was white with it.', a:['forecast','cape']},
-    {text:'The hotel\u2019s {0}, in a blue {1}, took my bag.', a:['receptionist','blouse']},
-    {text:'She gave me a {0} room on the second floor — a {1} with a window full of sea.', a:['perfect','berth']},
-    {text:'The town had voted for a new {0} on tourists — \u201c{1} income,\u201d the mayor called it.', a:['levy','supplementary']},
-    {text:'He said it with {0} confidence, and a {1} of local cider arrived with the key.', a:['imperial','sample']},
-    {text:'In the lounge a {0} arts class was starting, and the teacher broke a {1} with every move.', a:['martial','stereotype']},
-    {text:'She had no {0} for grace, only the {1} shift of weight.', a:['care','simultaneous']},
-    {text:'It was {0} with the tea cups, and the {1} of salt and pine stayed in the room.', a:['incongruous','scent']},
-    {text:'At dusk the wind began to {0}, and the sea took on a {1}.', a:['dissipate','glow']},
-    {text:'Two {0} of gull argued on the rail; my {1} was simple.', a:['species','content']}
+  "cards": [
+   [
+    "forecast",
+    "预报"
+   ],
+   [
+    "cape",
+    "海角"
+   ],
+   [
+    "receptionist",
+    "前台"
+   ],
+   [
+    "blouse",
+    "女衬衫"
+   ],
+   [
+    "perfect",
+    "完美的"
+   ],
+   [
+    "berth",
+    "铺位"
+   ],
+   [
+    "levy",
+    "征税"
+   ],
+   [
+    "supplementary",
+    "补充的"
+   ],
+   [
+    "imperial",
+    "帝国的"
+   ],
+   [
+    "sample",
+    "样品"
+   ],
+   [
+    "martial",
+    "武术的"
+   ],
+   [
+    "stereotype",
+    "刻板印象"
+   ],
+   [
+    "care",
+    "在意"
+   ],
+   [
+    "simultaneous",
+    "同时的"
+   ],
+   [
+    "incongruous",
+    "不协调的"
+   ],
+   [
+    "scent",
+    "气味"
+   ],
+   [
+    "dissipate",
+    "消散"
+   ],
+   [
+    "glow",
+    "微光"
+   ],
+   [
+    "species",
+    "物种"
+   ],
+   [
+    "content",
+    "满足的"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The {0} promised wind, and by noon the {1} was white with it.",
+    "a": [
+     "forecast",
+     "cape"
+    ]
+   },
+   {
+    "text": "The hotel’s {0}, in a blue {1}, took my bag.",
+    "a": [
+     "receptionist",
+     "blouse"
+    ]
+   },
+   {
+    "text": "She gave me a {0} room on the second floor — a {1} with a window full of sea.",
+    "a": [
+     "perfect",
+     "berth"
+    ]
+   },
+   {
+    "text": "The town had voted for a new {0} on tourists — “{1} income,” the mayor called it.",
+    "a": [
+     "levy",
+     "supplementary"
+    ]
+   },
+   {
+    "text": "He said it with {0} confidence, and a {1} of local cider arrived with the key.",
+    "a": [
+     "imperial",
+     "sample"
+    ]
+   },
+   {
+    "text": "In the lounge a {0} arts class was starting, and the teacher broke a {1} with every move.",
+    "a": [
+     "martial",
+     "stereotype"
+    ]
+   },
+   {
+    "text": "She had no {0} for grace, only the {1} shift of weight.",
+    "a": [
+     "care",
+     "simultaneous"
+    ]
+   },
+   {
+    "text": "It was {0} with the tea cups, and the {1} of salt and pine stayed in the room.",
+    "a": [
+     "incongruous",
+     "scent"
+    ]
+   },
+   {
+    "text": "At dusk the wind began to {0}, and the sea took on a {1}.",
+    "a": [
+     "dissipate",
+     "glow"
+    ]
+   },
+   {
+    "text": "Two {0} of gull argued on the rail; my {1} was simple.",
+    "a": [
+     "species",
+     "content"
+    ]
+   }
   ]
-},
-{
-  id:'S05', title:'The Repair Cafe', meta:'雅思 · 20 词',
-  words:{
-    downtown:{short:'n. 市中心', senses:[{pos:'n./adv.',zh:'市中心；在市中心'}]},
-    furniture:{short:'n. 家具', senses:[{pos:'n.',zh:'家具'}]},
-    ultimatum:{short:'n. 最后通牒', senses:[{pos:'n.',zh:'最后通牒'}]},
-    dismay:{short:'n. 沮丧', senses:[{pos:'n.',zh:'沮丧，惊愕'}]},
-    consumer:{short:'n. 消费者', senses:[{pos:'n.',zh:'消费者'}]},
-    conceive:{short:'v. 构想', senses:[{pos:'v.',zh:'构想，设想'}]},
-    enroll:{short:'v. 报名', senses:[{pos:'v.',zh:'报名，注册'}]},
-    eligible:{short:'adj. 有资格', senses:[{pos:'adj.',zh:'有资格的'}]},
-    nurture:{short:'v. 培育', senses:[{pos:'v.',zh:'培育，滋养'}]},
-    exchange:{short:'v. 交换', senses:[{pos:'v.',zh:'交换；n. 交换'}]},
-    foster:{short:'v. 培养', senses:[{pos:'v.',zh:'培养，促进'}]},
-    historic:{short:'adj. 历史性', senses:[{pos:'adj.',zh:'历史性的，有历史意义的'}]},
-    superior:{short:'adj. 高人一等', senses:[{pos:'adj.',zh:'高人一等的；更好的'}]},
-    tape:{short:'n. 胶带', senses:[{pos:'n.',zh:'胶带，磁带'}]},
-    haste:{short:'n. 仓促', senses:[{pos:'n.',zh:'仓促，匆忙'}]},
-    apologetic:{short:'adj. 抱歉', senses:[{pos:'adj.',zh:'抱歉的，歉意的'}]},
-    odds:{short:'n. 可能性', senses:[{pos:'n.',zh:'可能性，几率'}]},
-    articles:{short:'n. 文章', senses:[{pos:'n.',zh:'文章（article 的复数）'}]},
-    end:{short:'n. 结束', senses:[{pos:'n.',zh:'结束，末尾'}]},
-    elevate:{short:'v. 提升', senses:[{pos:'v.',zh:'提升，提高'}]}
+ },
+ {
+  "id": "S05",
+  "title": "The Repair Cafe",
+  "meta": "雅思 · 20 词",
+  "zh": "市中心家具店收到最后通牒，老板把它改成了一间“修理咖啡馆”。",
+  "words": {
+   "downtown": {
+    "short": "n. 市中心",
+    "senses": [
+     {
+      "pos": "n./adv.",
+      "zh": "市中心；在市中心"
+     }
+    ]
+   },
+   "furniture": {
+    "short": "n. 家具",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "家具"
+     }
+    ]
+   },
+   "ultimatum": {
+    "short": "n. 最后通牒",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "最后通牒"
+     }
+    ]
+   },
+   "dismay": {
+    "short": "n. 沮丧",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "沮丧，惊愕"
+     }
+    ]
+   },
+   "consumer": {
+    "short": "n. 消费者",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "消费者"
+     }
+    ]
+   },
+   "conceive": {
+    "short": "v. 构想",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "构想，设想"
+     }
+    ]
+   },
+   "enroll": {
+    "short": "v. 报名",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "报名，注册"
+     }
+    ]
+   },
+   "eligible": {
+    "short": "adj. 有资格",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "有资格的"
+     }
+    ]
+   },
+   "nurture": {
+    "short": "v. 培育",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "培育，滋养"
+     }
+    ]
+   },
+   "exchange": {
+    "short": "v. 交换",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "交换；n. 交换"
+     }
+    ]
+   },
+   "foster": {
+    "short": "v. 培养",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "培养，促进"
+     }
+    ]
+   },
+   "historic": {
+    "short": "adj. 历史性",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "历史性的，有历史意义的"
+     }
+    ]
+   },
+   "superior": {
+    "short": "adj. 高人一等",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "高人一等的；更好的"
+     }
+    ]
+   },
+   "tape": {
+    "short": "n. 胶带",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "胶带，磁带"
+     }
+    ]
+   },
+   "haste": {
+    "short": "n. 仓促",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "仓促，匆忙"
+     }
+    ]
+   },
+   "apologetic": {
+    "short": "adj. 抱歉",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "抱歉的，歉意的"
+     }
+    ]
+   },
+   "odds": {
+    "short": "n. 可能性",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "可能性，几率"
+     }
+    ]
+   },
+   "articles": {
+    "short": "n. 文章",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "文章（article 的复数）"
+     }
+    ]
+   },
+   "end": {
+    "short": "n. 结束",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "结束，末尾"
+     }
+    ]
+   },
+   "elevate": {
+    "short": "v. 提升",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "提升，提高"
+     }
+    ]
+   }
   },
-  paras:[
-    "The shop stood {downtown}, between a bank and a shoe repair, and sold {furniture} nobody under fifty wanted. When the lease came with an {ultimatum} — pay more or leave — the owner felt only {dismay}.",
-    "She had been a {consumer} of her own hopes for years. Now she had to {conceive} a different plan. She chose to {enroll} in a night course on marketing, was {eligible} for a small grant, and began to {nurture} the idea of a repair café: {exchange} a broken chair, learn a skill, {foster} a small community of fixers.",
-    "The course met in a {historic} hall. The teacher, {superior} to every excuse, put a strip of {tape} on the door with one note: '{haste} is not a plan.' Her {apologetic} students laughed anyway. The {odds} were poor, but she had read the {articles} about shops like hers.",
-    "By the {end} of the year the café had done more to {elevate} the street's mood than any sale. She still sold furniture — but now people brought it back to be fixed, and stayed."
+  "paras": [
+   "The shop stood {downtown}, between a bank and a shoe repair, and sold {furniture} nobody under fifty wanted. When the lease came with an {ultimatum} — pay more or leave — the owner felt only {dismay}.",
+   "She had been a {consumer} of her own hopes for years. Now she had to {conceive} a different plan. She chose to {enroll} in a night course on marketing, was {eligible} for a small grant, and began to {nurture} the idea of a repair café: {exchange} a broken chair, learn a skill, {foster} a small community of fixers.",
+   "The course met in a {historic} hall. The teacher, {superior} to every excuse, put a strip of {tape} on the door with one note: '{haste} is not a plan.' Her {apologetic} students laughed anyway. The {odds} were poor, but she had read the {articles} about shops like hers.",
+   "By the {end} of the year the café had done more to {elevate} the street's mood than any sale. She still sold furniture — but now people brought it back to be fixed, and stayed."
   ],
-  cards:[['downtown','市中心'],['furniture','家具'],['ultimatum','最后通牒'],['dismay','沮丧'],['consumer','消费者'],['conceive','构想'],['enroll','报名'],['eligible','有资格的'],['nurture','培育'],['exchange','交换'],['foster','培养'],['historic','历史性的'],['superior','高人一等的'],['tape','胶带'],['haste','仓促'],['apologetic','抱歉的'],['odds','可能性'],['articles','文章'],['end','结束'],['elevate','提升']],
-  fills:[
-    {text:'The shop stood {0}, and sold {1} nobody under fifty wanted.', a:['downtown','furniture']},
-    {text:'The lease came as an {0} — pay more or leave — and the owner felt only {1}.', a:['ultimatum','dismay']},
-    {text:'She had been a {0} of her own hopes, and now she had to {1} a different plan.', a:['consumer','conceive']},
-    {text:'She chose to {0} in a night course, and was {1} for a small grant.', a:['enroll','eligible']},
-    {text:'She began to {0} the idea of a repair café: {1} a broken chair, learn a skill.', a:['nurture','exchange']},
-    {text:'She wanted to {0} a small community of fixers, and the course met in a {1} hall.', a:['foster','historic']},
-    {text:'The teacher was {0} to every excuse, and put a strip of {1} on the door.', a:['superior','tape']},
-    {text:'The note read \u201c{0} is not a plan\u201d, and her {1} students laughed anyway.', a:['haste','apologetic']},
-    {text:'The {0} were poor, but she had read the {1} about shops like hers.', a:['odds','articles']},
-    {text:'By the {0} of the year the café had done more to {1} the street\u2019s mood.', a:['end','elevate']}
+  "cards": [
+   [
+    "downtown",
+    "市中心"
+   ],
+   [
+    "furniture",
+    "家具"
+   ],
+   [
+    "ultimatum",
+    "最后通牒"
+   ],
+   [
+    "dismay",
+    "沮丧"
+   ],
+   [
+    "consumer",
+    "消费者"
+   ],
+   [
+    "conceive",
+    "构想"
+   ],
+   [
+    "enroll",
+    "报名"
+   ],
+   [
+    "eligible",
+    "有资格的"
+   ],
+   [
+    "nurture",
+    "培育"
+   ],
+   [
+    "exchange",
+    "交换"
+   ],
+   [
+    "foster",
+    "培养"
+   ],
+   [
+    "historic",
+    "历史性的"
+   ],
+   [
+    "superior",
+    "高人一等的"
+   ],
+   [
+    "tape",
+    "胶带"
+   ],
+   [
+    "haste",
+    "仓促"
+   ],
+   [
+    "apologetic",
+    "抱歉的"
+   ],
+   [
+    "odds",
+    "可能性"
+   ],
+   [
+    "articles",
+    "文章"
+   ],
+   [
+    "end",
+    "结束"
+   ],
+   [
+    "elevate",
+    "提升"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The shop stood {0}, and sold {1} nobody under fifty wanted.",
+    "a": [
+     "downtown",
+     "furniture"
+    ]
+   },
+   {
+    "text": "The lease came as an {0} — pay more or leave — and the owner felt only {1}.",
+    "a": [
+     "ultimatum",
+     "dismay"
+    ]
+   },
+   {
+    "text": "She had been a {0} of her own hopes, and now she had to {1} a different plan.",
+    "a": [
+     "consumer",
+     "conceive"
+    ]
+   },
+   {
+    "text": "She chose to {0} in a night course, and was {1} for a small grant.",
+    "a": [
+     "enroll",
+     "eligible"
+    ]
+   },
+   {
+    "text": "She began to {0} the idea of a repair café: {1} a broken chair, learn a skill.",
+    "a": [
+     "nurture",
+     "exchange"
+    ]
+   },
+   {
+    "text": "She wanted to {0} a small community of fixers, and the course met in a {1} hall.",
+    "a": [
+     "foster",
+     "historic"
+    ]
+   },
+   {
+    "text": "The teacher was {0} to every excuse, and put a strip of {1} on the door.",
+    "a": [
+     "superior",
+     "tape"
+    ]
+   },
+   {
+    "text": "The note read “{0} is not a plan”, and her {1} students laughed anyway.",
+    "a": [
+     "haste",
+     "apologetic"
+    ]
+   },
+   {
+    "text": "The {0} were poor, but she had read the {1} about shops like hers.",
+    "a": [
+     "odds",
+     "articles"
+    ]
+   },
+   {
+    "text": "By the {0} of the year the café had done more to {1} the street’s mood.",
+    "a": [
+     "end",
+     "elevate"
+    ]
+   }
   ]
-}
+ },
+ {
+  "id": "S06",
+  "title": "The Night Bus",
+  "meta": "雅思 · 20 词",
+  "zh": "夜班公交穿过睡着的城市。司机、乘客、一个陌生人和“我”，在同一辆车上待到了天亮，谁也没问谁的名字。",
+  "words": {
+   "route": {
+    "short": "n. 路线",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "路线，航线"
+     }
+    ]
+   },
+   "shift": {
+    "short": "n. 班次",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "班次，轮班"
+     }
+    ]
+   },
+   "weary": {
+    "short": "adj. 疲惫",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "疲惫的，厌倦的"
+     }
+    ]
+   },
+   "passenger": {
+    "short": "n. 乘客",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "乘客"
+     }
+    ]
+   },
+   "courtesy": {
+    "short": "n. 礼貌",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "礼貌，礼节"
+     }
+    ]
+   },
+   "aisle": {
+    "short": "n. 过道",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "过道，走道"
+     }
+    ]
+   },
+   "umbrella": {
+    "short": "n. 雨伞",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "雨伞"
+     }
+    ]
+   },
+   "drizzle": {
+    "short": "n. 细雨",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "毛毛雨；v. 下细雨"
+     }
+    ]
+   },
+   "rattle": {
+    "short": "v. 哐当作响",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "发出哐当声；n. 响声"
+     }
+    ]
+   },
+   "halt": {
+    "short": "v. 停下",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "停下；n. 停止"
+     }
+    ]
+   },
+   "stranger": {
+    "short": "n. 陌生人",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "陌生人"
+     }
+    ]
+   },
+   "dim": {
+    "short": "adj. 昏暗",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "昏暗的；v. 使变暗"
+     }
+    ]
+   },
+   "fare": {
+    "short": "n. 车费",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "车费，票价"
+     }
+    ]
+   },
+   "glance": {
+    "short": "n. 一瞥",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "一瞥；v. 瞥一眼"
+     }
+    ]
+   },
+   "vacant": {
+    "short": "adj. 空着",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "空着的，空缺的"
+     }
+    ]
+   },
+   "overhear": {
+    "short": "v. 无意听到",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "无意中听到"
+     }
+    ]
+   },
+   "murmur": {
+    "short": "v. 低语",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "低声说，咕哝"
+     }
+    ]
+   },
+   "dial": {
+    "short": "v. 拨号",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "拨（电话）"
+     }
+    ]
+   },
+   "dawn": {
+    "short": "n. 黎明",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "黎明，拂晓"
+     }
+    ]
+   },
+   "commute": {
+    "short": "v. 通勤",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "通勤，上下班往返"
+     }
+    ]
+   }
+  },
+  "paras": [
+   "The night bus ran its usual {route} through the sleeping city. At the wheel was a driver on the last {shift} of the week, {weary} but polite, and every {passenger} got the same {courtesy}: a nod and a quiet evening.",
+   "I took a seat by the {aisle}, my {umbrella} still wet from the {drizzle}. The old bus would {rattle} over the bridge and {halt} at a corner where a {stranger} stood under a {dim} lamp, checking his watch. He paid his {fare}, gave the seats a quick {glance}, and chose one that was {vacant}.",
+   "Near the park I could {overhear} him {murmur} into his phone; then he would {dial} another number and give up. Nobody spoke. By {dawn} we were the only two left, and he nodded at me as he got off. Two people who would {commute} home without ever learning each other's names."
+  ],
+  "cards": [
+   [
+    "route",
+    "路线"
+   ],
+   [
+    "shift",
+    "班次"
+   ],
+   [
+    "weary",
+    "疲惫的"
+   ],
+   [
+    "passenger",
+    "乘客"
+   ],
+   [
+    "courtesy",
+    "礼貌"
+   ],
+   [
+    "aisle",
+    "过道"
+   ],
+   [
+    "umbrella",
+    "雨伞"
+   ],
+   [
+    "drizzle",
+    "细雨"
+   ],
+   [
+    "rattle",
+    "哐当作响"
+   ],
+   [
+    "halt",
+    "停下"
+   ],
+   [
+    "stranger",
+    "陌生人"
+   ],
+   [
+    "dim",
+    "昏暗的"
+   ],
+   [
+    "fare",
+    "车费"
+   ],
+   [
+    "glance",
+    "一瞥"
+   ],
+   [
+    "vacant",
+    "空着的"
+   ],
+   [
+    "overhear",
+    "无意听到"
+   ],
+   [
+    "murmur",
+    "低语"
+   ],
+   [
+    "dial",
+    "拨号"
+   ],
+   [
+    "dawn",
+    "黎明"
+   ],
+   [
+    "commute",
+    "通勤"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The night bus ran its usual {0} through the sleeping city; at the wheel was a driver on the last {1}.",
+    "a": [
+     "route",
+     "shift"
+    ]
+   },
+   {
+    "text": "He was {0} but polite, and every {1} got the same courtesy.",
+    "a": [
+     "weary",
+     "passenger"
+    ]
+   },
+   {
+    "text": "Each passenger got the same {0}: a nod; I took a seat by the {1}.",
+    "a": [
+     "courtesy",
+     "aisle"
+    ]
+   },
+   {
+    "text": "My {0} was still wet from the {1}.",
+    "a": [
+     "umbrella",
+     "drizzle"
+    ]
+   },
+   {
+    "text": "The old bus would {0} over the bridge and {1} at the corner.",
+    "a": [
+     "rattle",
+     "halt"
+    ]
+   },
+   {
+    "text": "A {0} stood under a {1} lamp, checking his watch.",
+    "a": [
+     "stranger",
+     "dim"
+    ]
+   },
+   {
+    "text": "He paid his {0}, gave the seats a quick {1}, and chose one by the window.",
+    "a": [
+     "fare",
+     "glance"
+    ]
+   },
+   {
+    "text": "The seats were {0}; near the park I could {1} him talking to himself.",
+    "a": [
+     "vacant",
+     "overhear"
+    ]
+   },
+   {
+    "text": "I could hear him {0}; then he would {1} another number.",
+    "a": [
+     "murmur",
+     "dial"
+    ]
+   },
+   {
+    "text": "By {0} only two of us were left, two people who would {1} home without ever learning each other’s names.",
+    "a": [
+     "dawn",
+     "commute"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "S07",
+  "title": "The Orchard Year",
+  "meta": "雅思 · 20 词",
+  "zh": "果园里每个季节都有活。爷爷教嫁接、教等，也教人别催树：催了会枯。",
+  "words": {
+   "seasonal": {
+    "short": "adj. 季节性的",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "季节性的"
+     }
+    ]
+   },
+   "orchard": {
+    "short": "n. 果园",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "果园"
+     }
+    ]
+   },
+   "prune": {
+    "short": "v. 修剪",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "修剪（树枝）"
+     }
+    ]
+   },
+   "blossom": {
+    "short": "n. 花",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "花，开花期；v. 开花"
+     }
+    ]
+   },
+   "irrigation": {
+    "short": "n. 灌溉",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "灌溉"
+     }
+    ]
+   },
+   "drought": {
+    "short": "n. 旱灾",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "旱灾，干旱"
+     }
+    ]
+   },
+   "soil": {
+    "short": "n. 土壤",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "土壤"
+     }
+    ]
+   },
+   "graft": {
+    "short": "v. 嫁接",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "嫁接；n. 移植"
+     }
+    ]
+   },
+   "fragile": {
+    "short": "adj. 脆弱",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "脆弱的，易碎的"
+     }
+    ]
+   },
+   "harvest": {
+    "short": "n. 收获",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "收获；v. 收割"
+     }
+    ]
+   },
+   "basket": {
+    "short": "n. 篮子",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "篮子"
+     }
+    ]
+   },
+   "ladder": {
+    "short": "n. 梯子",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "梯子"
+     }
+    ]
+   },
+   "abundance": {
+    "short": "n. 丰富",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "丰富，充裕"
+     }
+    ]
+   },
+   "yield": {
+    "short": "n. 产量",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "产量；v. 出产"
+     }
+    ]
+   },
+   "ripen": {
+    "short": "v. 成熟",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "成熟"
+     }
+    ]
+   },
+   "rot": {
+    "short": "v. 腐烂",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "腐烂；n. 腐烂"
+     }
+    ]
+   },
+   "compost": {
+    "short": "n. 堆肥",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "堆肥"
+     }
+    ]
+   },
+   "labour": {
+    "short": "n. 劳动",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "劳动；v. 劳作"
+     }
+    ]
+   },
+   "patience": {
+    "short": "n. 耐心",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "耐心"
+     }
+    ]
+   },
+   "wither": {
+    "short": "v. 枯萎",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "枯萎，凋谢"
+     }
+    ]
+   }
+  },
+  "paras": [
+   "Every {seasonal} job in the {orchard} had its own month. In spring we would {prune} the old trees and watch the {blossom} come; in summer we carried water from the {irrigation} ditch when the {drought} went on too long, and turned the {soil} between the rows.",
+   "My grandfather taught me to {graft} a good branch onto a weak one, and to be careful with the {fragile} new shoots. In autumn the {harvest} filled every {basket}; the {ladder} creaked, and the {abundance} was almost embarrassing. We would count the {yield} in the cold shed and sell what we could.",
+   "Some fruit would {ripen} too fast and start to {rot}; that went to the {compost}. The rest needed {labour} and a great deal of {patience}. He said the trees would {wither} if we hurried them, and he was right."
+  ],
+  "cards": [
+   [
+    "seasonal",
+    "季节性的"
+   ],
+   [
+    "orchard",
+    "果园"
+   ],
+   [
+    "prune",
+    "修剪"
+   ],
+   [
+    "blossom",
+    "花；开花"
+   ],
+   [
+    "irrigation",
+    "灌溉"
+   ],
+   [
+    "drought",
+    "旱灾"
+   ],
+   [
+    "soil",
+    "土壤"
+   ],
+   [
+    "graft",
+    "嫁接"
+   ],
+   [
+    "fragile",
+    "脆弱的"
+   ],
+   [
+    "harvest",
+    "收获"
+   ],
+   [
+    "basket",
+    "篮子"
+   ],
+   [
+    "ladder",
+    "梯子"
+   ],
+   [
+    "abundance",
+    "丰富"
+   ],
+   [
+    "yield",
+    "产量"
+   ],
+   [
+    "ripen",
+    "成熟"
+   ],
+   [
+    "rot",
+    "腐烂"
+   ],
+   [
+    "compost",
+    "堆肥"
+   ],
+   [
+    "labour",
+    "劳动"
+   ],
+   [
+    "patience",
+    "耐心"
+   ],
+   [
+    "wither",
+    "枯萎"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "Every {0} job in the {1} had its own month.",
+    "a": [
+     "seasonal",
+     "orchard"
+    ]
+   },
+   {
+    "text": "In spring we would {0} the old trees and watch the {1} come.",
+    "a": [
+     "prune",
+     "blossom"
+    ]
+   },
+   {
+    "text": "In summer we carried water from the {0} ditch when the {1} went on too long.",
+    "a": [
+     "irrigation",
+     "drought"
+    ]
+   },
+   {
+    "text": "We turned the {0} between the rows; my grandfather taught me to {1} a good branch onto a weak one.",
+    "a": [
+     "soil",
+     "graft"
+    ]
+   },
+   {
+    "text": "He was careful with the {0} new shoots; in autumn the {1} filled every basket.",
+    "a": [
+     "fragile",
+     "harvest"
+    ]
+   },
+   {
+    "text": "Every {0} was full, and the {1} creaked.",
+    "a": [
+     "basket",
+     "ladder"
+    ]
+   },
+   {
+    "text": "The {0} was almost embarrassing; we counted the {1} in the cold shed.",
+    "a": [
+     "abundance",
+     "yield"
+    ]
+   },
+   {
+    "text": "Some fruit would {0} too fast and start to {1}.",
+    "a": [
+     "ripen",
+     "rot"
+    ]
+   },
+   {
+    "text": "Fruit that began to rot went to the {0}; the rest needed {1}.",
+    "a": [
+     "compost",
+     "labour"
+    ]
+   },
+   {
+    "text": "The rest needed {0}, he said, or the trees would {1}.",
+    "a": [
+     "patience",
+     "wither"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "S08",
+  "title": "A Letter from the Archive",
+  "meta": "雅思 · 20 词",
+  "zh": "地下库房里一份五十年没打开的稿子。纸很脆、墨已淡，真假之间只差一个蜡封和一条脚注。",
+  "words": {
+   "archive": {
+    "short": "n. 档案馆",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "档案馆，档案"
+     }
+    ]
+   },
+   "vault": {
+    "short": "n. 库房",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "金库，地下库房"
+     }
+    ]
+   },
+   "catalogue": {
+    "short": "n. 目录",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "目录，编目"
+     }
+    ]
+   },
+   "shelf": {
+    "short": "n. 架子",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "架子，搁板"
+     }
+    ]
+   },
+   "manuscript": {
+    "short": "n. 手稿",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "手稿，原稿"
+     }
+    ]
+   },
+   "curator": {
+    "short": "n. 馆长",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "馆长，策展人"
+     }
+    ]
+   },
+   "brittle": {
+    "short": "adj. 易碎",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "易碎的，脆的"
+     }
+    ]
+   },
+   "ink": {
+    "short": "n. 墨水",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "墨水"
+     }
+    ]
+   },
+   "footnote": {
+    "short": "n. 脚注",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "脚注"
+     }
+    ]
+   },
+   "margin": {
+    "short": "n. 页边",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "页边空白，边缘"
+     }
+    ]
+   },
+   "decipher": {
+    "short": "v. 辨认",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "辨认，破译"
+     }
+    ]
+   },
+   "excerpt": {
+    "short": "n. 摘录",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "摘录，节选"
+     }
+    ]
+   },
+   "transcript": {
+    "short": "n. 抄本",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "抄本，文字记录"
+     }
+    ]
+   },
+   "provenance": {
+    "short": "n. 来源",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "（文物等的）来源，出处"
+     }
+    ]
+   },
+   "clue": {
+    "short": "n. 线索",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "线索"
+     }
+    ]
+   },
+   "seal": {
+    "short": "n. 印章",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "印章，封条；v. 密封"
+     }
+    ]
+   },
+   "forgery": {
+    "short": "n. 赝品",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "赝品，伪造"
+     }
+    ]
+   },
+   "authentic": {
+    "short": "adj. 真品",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "真正的，可信的"
+     }
+    ]
+   },
+   "obsolete": {
+    "short": "adj. 过时",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "过时的，废弃的"
+     }
+    ]
+   },
+   "dust": {
+    "short": "n. 灰尘",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "灰尘；v. 掸灰"
+     }
+    ]
+   }
+  },
+  "paras": [
+   "The {archive} kept its treasures in a basement {vault}: a {catalogue} of names, a {shelf} of boxes, and one {manuscript} that nobody had opened in fifty years.",
+   "The {curator} wore gloves. The paper was {brittle}, the {ink} had faded, and a {footnote} in the {margin} was almost impossible to {decipher}. She read an {excerpt} aloud, then checked the {transcript} made in 1962. The same words, but a different hand.",
+   "The {provenance} was the real {clue}: a dealer's {seal} on the back, a letter from a man who called the whole thing a {forgery}, and a second opinion that called it {authentic}. The typewriter that wrote it has been {obsolete} for decades, which only made the case harder.",
+   "She put the folder back and blew the {dust} off her gloves. Some questions, she said, are better left open."
+  ],
+  "cards": [
+   [
+    "archive",
+    "档案馆"
+   ],
+   [
+    "vault",
+    "库房"
+   ],
+   [
+    "catalogue",
+    "目录"
+   ],
+   [
+    "shelf",
+    "架子"
+   ],
+   [
+    "manuscript",
+    "手稿"
+   ],
+   [
+    "curator",
+    "馆长"
+   ],
+   [
+    "brittle",
+    "易碎的"
+   ],
+   [
+    "ink",
+    "墨水"
+   ],
+   [
+    "footnote",
+    "脚注"
+   ],
+   [
+    "margin",
+    "页边"
+   ],
+   [
+    "decipher",
+    "辨认"
+   ],
+   [
+    "excerpt",
+    "摘录"
+   ],
+   [
+    "transcript",
+    "抄本"
+   ],
+   [
+    "provenance",
+    "来源"
+   ],
+   [
+    "clue",
+    "线索"
+   ],
+   [
+    "seal",
+    "印章"
+   ],
+   [
+    "forgery",
+    "赝品"
+   ],
+   [
+    "authentic",
+    "真品"
+   ],
+   [
+    "obsolete",
+    "过时的"
+   ],
+   [
+    "dust",
+    "灰尘"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The {0} kept its treasures in a basement {1}.",
+    "a": [
+     "archive",
+     "vault"
+    ]
+   },
+   {
+    "text": "A {0} of names, a {1} of boxes, and one manuscript nobody had opened.",
+    "a": [
+     "catalogue",
+     "shelf"
+    ]
+   },
+   {
+    "text": "The {0} that nobody had opened in fifty years was handled by the {1}.",
+    "a": [
+     "manuscript",
+     "curator"
+    ]
+   },
+   {
+    "text": "The paper was {0}, and the {1} had faded.",
+    "a": [
+     "brittle",
+     "ink"
+    ]
+   },
+   {
+    "text": "A {0} in the {1} was almost impossible to decipher.",
+    "a": [
+     "footnote",
+     "margin"
+    ]
+   },
+   {
+    "text": "She could hardly {0} it; she read an {1} aloud.",
+    "a": [
+     "decipher",
+     "excerpt"
+    ]
+   },
+   {
+    "text": "Then she checked the {0} made in 1962; the {1} was the real clue.",
+    "a": [
+     "transcript",
+     "provenance"
+    ]
+   },
+   {
+    "text": "The real {0} was a dealer’s {1} on the back.",
+    "a": [
+     "clue",
+     "seal"
+    ]
+   },
+   {
+    "text": "One letter called the whole thing a {0}; another called it {1}.",
+    "a": [
+     "forgery",
+     "authentic"
+    ]
+   },
+   {
+    "text": "The typewriter has been {0} for decades; she blew the {1} off her gloves.",
+    "a": [
+     "obsolete",
+     "dust"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "S09",
+  "title": "The Swimming Lesson",
+  "meta": "雅思 · 20 词",
+  "zh": "浅水区开始的一课。怕水的人学会漂，比学会游更重要。",
+  "words": {
+   "shallow": {
+    "short": "adj. 浅的",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "浅的"
+     }
+    ]
+   },
+   "instructor": {
+    "short": "n. 教练",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "教练，指导者"
+     }
+    ]
+   },
+   "float": {
+    "short": "v. 漂浮",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "漂浮"
+     }
+    ]
+   },
+   "breath": {
+    "short": "n. 呼吸",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "呼吸"
+     }
+    ]
+   },
+   "courage": {
+    "short": "n. 勇气",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "勇气"
+     }
+    ]
+   },
+   "chlorine": {
+    "short": "n. 氯",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "氯，漂白剂"
+     }
+    ]
+   },
+   "goggles": {
+    "short": "n. 泳镜",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "护目镜，泳镜"
+     }
+    ]
+   },
+   "plunge": {
+    "short": "v. 跳入",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "跳入，猛冲"
+     }
+    ]
+   },
+   "gasp": {
+    "short": "v. 喘气",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "喘气，倒吸气"
+     }
+    ]
+   },
+   "trust": {
+    "short": "v. 信任",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "信任，相信"
+     }
+    ]
+   },
+   "buoy": {
+    "short": "n. 浮标",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "浮标，救生圈"
+     }
+    ]
+   },
+   "current": {
+    "short": "n. 水流",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "水流，电流"
+     }
+    ]
+   },
+   "panic": {
+    "short": "n. 恐慌",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "恐慌；v. 惊慌"
+     }
+    ]
+   },
+   "tremble": {
+    "short": "v. 发抖",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "发抖，颤抖"
+     }
+    ]
+   },
+   "gradual": {
+    "short": "adj. 逐渐的",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "逐渐的，逐步的"
+     }
+    ]
+   },
+   "stroke": {
+    "short": "n. 划水",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "划水，笔画；v. 抚摸"
+     }
+    ]
+   },
+   "rhythm": {
+    "short": "n. 节奏",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "节奏，韵律"
+     }
+    ]
+   },
+   "drift": {
+    "short": "v. 漂流",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "漂流，漂移"
+     }
+    ]
+   },
+   "rescue": {
+    "short": "v. 营救",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "营救；n. 救援"
+     }
+    ]
+   },
+   "triumph": {
+    "short": "n. 胜利",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "胜利，成功"
+     }
+    ]
+   }
+  },
+  "paras": [
+   "The pool was {shallow} at one end, and that was where the {instructor} began. 'First, {float},' she said. 'Then find your {breath}.'",
+   "I had no {courage} that morning. The water smelled of {chlorine}, my {goggles} fogged, and when I tried to {plunge} in, I would {gasp} and grab the rail. She told me to {trust} the {buoy} and let the {current} carry me a little, but I could feel the {panic} rise and my hands {tremble}.",
+   "So we went slowly. {gradual} progress, one {stroke} at a time, a steady {rhythm} of breath and arm. I learned to {drift} without fighting, and how to call for {rescue} if the water pulled hard.",
+   "By August I could cross the pool without stopping. It was not a {triumph} anyone would film; it was just a body learning that it could float."
+  ],
+  "cards": [
+   [
+    "shallow",
+    "浅的"
+   ],
+   [
+    "instructor",
+    "教练"
+   ],
+   [
+    "float",
+    "漂浮"
+   ],
+   [
+    "breath",
+    "呼吸"
+   ],
+   [
+    "courage",
+    "勇气"
+   ],
+   [
+    "chlorine",
+    "氯"
+   ],
+   [
+    "goggles",
+    "泳镜"
+   ],
+   [
+    "plunge",
+    "跳入"
+   ],
+   [
+    "gasp",
+    "喘气"
+   ],
+   [
+    "trust",
+    "信任"
+   ],
+   [
+    "buoy",
+    "浮标"
+   ],
+   [
+    "current",
+    "水流"
+   ],
+   [
+    "panic",
+    "恐慌"
+   ],
+   [
+    "tremble",
+    "发抖"
+   ],
+   [
+    "gradual",
+    "逐渐的"
+   ],
+   [
+    "stroke",
+    "划水"
+   ],
+   [
+    "rhythm",
+    "节奏"
+   ],
+   [
+    "drift",
+    "漂流"
+   ],
+   [
+    "rescue",
+    "营救"
+   ],
+   [
+    "triumph",
+    "胜利"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "The pool was {0} at one end, and that was where the {1} began.",
+    "a": [
+     "shallow",
+     "instructor"
+    ]
+   },
+   {
+    "text": "“First, {0},” she said. “Then find your {1}.”",
+    "a": [
+     "float",
+     "breath"
+    ]
+   },
+   {
+    "text": "I had no {0} that morning, and the water smelled of {1}.",
+    "a": [
+     "courage",
+     "chlorine"
+    ]
+   },
+   {
+    "text": "My {0} fogged, and when I tried to {1} in, I would gasp.",
+    "a": [
+     "goggles",
+     "plunge"
+    ]
+   },
+   {
+    "text": "I would {0} and grab the rail; she told me to {1} the water.",
+    "a": [
+     "gasp",
+     "trust"
+    ]
+   },
+   {
+    "text": "She pointed at the {0} and let the {1} carry me a little.",
+    "a": [
+     "buoy",
+     "current"
+    ]
+   },
+   {
+    "text": "I could feel the {0} rise and my hands {1}.",
+    "a": [
+     "panic",
+     "tremble"
+    ]
+   },
+   {
+    "text": "So we went slowly: {0} progress, one {1} at a time.",
+    "a": [
+     "gradual",
+     "stroke"
+    ]
+   },
+   {
+    "text": "A steady {0} of breath and arm; I learned to {1} without fighting.",
+    "a": [
+     "rhythm",
+     "drift"
+    ]
+   },
+   {
+    "text": "I learned how to call for {0}; it was not a {1} anyone would film.",
+    "a": [
+     "rescue",
+     "triumph"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "S10",
+  "title": "The Market at Six",
+  "meta": "雅思 · 20 词",
+  "zh": "早上六点的市场：摊位、香料、秤、硬币，还有母亲那种不还价的还价法。",
+  "words": {
+   "stall": {
+    "short": "n. 摊位",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "摊位，货摊"
+     }
+    ]
+   },
+   "vendor": {
+    "short": "n. 摊主",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "摊主，小贩"
+     }
+    ]
+   },
+   "aroma": {
+    "short": "n. 香气",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "香气，香味"
+     }
+    ]
+   },
+   "spice": {
+    "short": "n. 香料",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "香料"
+     }
+    ]
+   },
+   "crate": {
+    "short": "n. 板条箱",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "板条箱，筐"
+     }
+    ]
+   },
+   "fresh": {
+    "short": "adj. 新鲜",
+    "senses": [
+     {
+      "pos": "adj.",
+      "zh": "新鲜的"
+     }
+    ]
+   },
+   "queue": {
+    "short": "n. 队伍",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "队伍；v. 排队"
+     }
+    ]
+   },
+   "elbow": {
+    "short": "n. 手肘",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "手肘；v. 用肘挤"
+     }
+    ]
+   },
+   "crowd": {
+    "short": "n. 人群",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "人群；v. 挤满"
+     }
+    ]
+   },
+   "haggle": {
+    "short": "v. 讨价还价",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "讨价还价"
+     }
+    ]
+   },
+   "bargain": {
+    "short": "v. 还价",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "还价；n. 便宜货"
+     }
+    ]
+   },
+   "weigh": {
+    "short": "v. 称重",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "称重，权衡"
+     }
+    ]
+   },
+   "scales": {
+    "short": "n. 秤",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "秤，天平（scale 的复数）"
+     }
+    ]
+   },
+   "coin": {
+    "short": "n. 硬币",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "硬币"
+     }
+    ]
+   },
+   "change": {
+    "short": "n. 零钱",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "零钱；v. 改变"
+     }
+    ]
+   },
+   "wrap": {
+    "short": "v. 包起来",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "包，裹"
+     }
+    ]
+   },
+   "shout": {
+    "short": "v. 喊",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "喊叫；n. 喊声"
+     }
+    ]
+   },
+   "refuse": {
+    "short": "v. 拒绝",
+    "senses": [
+     {
+      "pos": "v.",
+      "zh": "拒绝"
+     }
+    ]
+   },
+   "neighbour": {
+    "short": "n. 邻居",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "邻居，邻人"
+     }
+    ]
+   },
+   "sunset": {
+    "short": "n. 日落",
+    "senses": [
+     {
+      "pos": "n.",
+      "zh": "日落，傍晚"
+     }
+    ]
+   }
+  },
+  "paras": [
+   "At six the market was already loud. Each {stall} had its own {vendor}, its own {aroma} of {spice}, and a {crate} of something {fresh} stacked by the kerb.",
+   "You would {queue} for the bread, {elbow} through the {crowd}, and {haggle} over the price of fish. My mother would never {bargain}; she simply waited, and the seller would {weigh} the fish on his {scales} and add a little more. Then came the {coin}s, the {change}, the paper to {wrap} it in.",
+   "Some sellers would {shout} at you; others would {refuse} to look up. Our {neighbour} ran the cheese table and always saved us the good end. By {sunset} the tables were folding, the light was orange, and the whole street smelled of dinner."
+  ],
+  "cards": [
+   [
+    "stall",
+    "摊位"
+   ],
+   [
+    "vendor",
+    "摊主"
+   ],
+   [
+    "aroma",
+    "香气"
+   ],
+   [
+    "spice",
+    "香料"
+   ],
+   [
+    "crate",
+    "板条箱"
+   ],
+   [
+    "fresh",
+    "新鲜的"
+   ],
+   [
+    "queue",
+    "队伍"
+   ],
+   [
+    "elbow",
+    "手肘"
+   ],
+   [
+    "crowd",
+    "人群"
+   ],
+   [
+    "haggle",
+    "讨价还价"
+   ],
+   [
+    "bargain",
+    "还价"
+   ],
+   [
+    "weigh",
+    "称重"
+   ],
+   [
+    "scales",
+    "秤"
+   ],
+   [
+    "coin",
+    "硬币"
+   ],
+   [
+    "change",
+    "零钱"
+   ],
+   [
+    "wrap",
+    "包起来"
+   ],
+   [
+    "shout",
+    "喊"
+   ],
+   [
+    "refuse",
+    "拒绝"
+   ],
+   [
+    "neighbour",
+    "邻居"
+   ],
+   [
+    "sunset",
+    "日落"
+   ]
+  ],
+  "fills": [
+   {
+    "text": "At six the market was already loud: each {0} had its own {1}.",
+    "a": [
+     "stall",
+     "vendor"
+    ]
+   },
+   {
+    "text": "Each had its own {0} of {1}, and a crate of something fresh.",
+    "a": [
+     "aroma",
+     "spice"
+    ]
+   },
+   {
+    "text": "A {0} of something {1} was stacked by the kerb.",
+    "a": [
+     "crate",
+     "fresh"
+    ]
+   },
+   {
+    "text": "You would {0} for the bread and push through the {1}.",
+    "a": [
+     "queue",
+     "crowd"
+    ]
+   },
+   {
+    "text": "You would {0} your way in and {1} over the price of fish.",
+    "a": [
+     "elbow",
+     "haggle"
+    ]
+   },
+   {
+    "text": "My mother would never {0}; the seller would {1} the fish on his scales.",
+    "a": [
+     "bargain",
+     "weigh"
+    ]
+   },
+   {
+    "text": "He would weigh it on his {0}, and then came the {1}s.",
+    "a": [
+     "scales",
+     "coin"
+    ]
+   },
+   {
+    "text": "Then came the {0}, the paper to {1} it in.",
+    "a": [
+     "change",
+     "wrap"
+    ]
+   },
+   {
+    "text": "Some sellers would {0} at you; others would {1} to look up.",
+    "a": [
+     "shout",
+     "refuse"
+    ]
+   },
+   {
+    "text": "Our {0} ran the cheese table; by {1} the tables were folding.",
+    "a": [
+     "neighbour",
+     "sunset"
+    ]
+   }
+  ]
+ }
 ];
 /* ==DATA-END== */
 
 /* ───────────────────────── 状态 ───────────────────────── */
+const BUILD = '2026-10-29 · v4 · 10 篇';
 const KEY = 'vs.story.v2';
 const store = {
   failed:false,
@@ -477,8 +3761,8 @@ function progress(){
   return { done, words: done.length * 20, need: Math.max(0, GOAL_STORIES - done.length) };
 }
 function nextStory(){
-  const t = today();
-  return STORIES.find(s => !t.done.includes(s.id)) || null;
+  const c = db.cursor || 0;
+  return c < STORIES.length ? STORIES[c] : null;
 }
 
 /* ───────────────────────── 顶栏 ───────────────────────── */
@@ -635,6 +3919,8 @@ function gradeB(story){
 
   const t = today();
   if (!t.done.includes(story.id)) t.done.push(story.id);
+  const idx = STORIES.findIndex(x => x.id === story.id);
+  if (idx >= 0 && idx + 1 > (db.cursor || 0)) db.cursor = idx + 1;
   t.results[story.id] = { at:Date.now(), known, forgot, fuzzy, right, total, plan };
 
   // 跨天复习池：错词按 1/3/7 天排期
@@ -655,6 +3941,7 @@ function gradeB(story){
         plan.map(x => '<div class="wr"><b>' + x.w + '</b><span>' + esc(glossOf(story,x.w)) + '</span><span class="due">' + x.d + ' 天后 · ' + datePlus(x.d) + '</span></div>').join('') +
         '</div>'
       : '<div class="h2">全对</div><div class="wrongbox"><div class="wr"><span class="good">这篇没有错词。</span></div></div>') +
+    (story.zh ? '<details class="zhbox"><summary>中文大意（做完才解锁喵）</summary><p>' + esc(story.zh) + '</p></details>' : '') +
     '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
       (p.need > 0 ? '今日 ' + p.words + '/100 词，还差 ' + p.need + ' 篇。' : '今日已达标 ' + p.words + '/100 词。') +
     '</span></div>' +
@@ -701,12 +3988,13 @@ function resetRun(){
 }
 function renderQueue(){
   const t = today();
-  $('#qlist').innerHTML = STORIES.map(s => {
-    const done = t.done.includes(s.id);
-    return '<div class="qrow' + (done ? ' todo' : '') + '"><span class="qid">' + s.id + '</span><span>' + esc(s.title) + '</span><span class="st">' + (done ? '已测试' : '未开始') + '</span></div>';
+  const c = db.cursor || 0;
+  $('#qlist').innerHTML = STORIES.map((s,i) => {
+    const st = i < c ? '已读' : (i === c ? '下一篇' : '未读');
+    return '<div class="qrow' + (i < c ? ' todo' : '') + '"><span class="qid">' + s.id + '</span><span>' + esc(s.title) + '</span><span class="st">' + st + '</span></div>';
   }).join('');
   const p = progress();
-  $('#qsub').textContent = dayKey() + ' · ' + p.words + '/100 词 · 已完成 ' + p.done.length + '/' + GOAL_STORIES + ' 篇';
+  $('#qsub').textContent = dayKey() + ' · 今日 ' + p.words + '/100 词 · 库里还有 ' + Math.max(0, STORIES.length - c) + ' 篇 · ' + BUILD;
 }
 
 $('#queueBtn').onclick = () => { renderQueue(); $('#sheet').classList.add('open'); };
@@ -761,10 +4049,41 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) stopSpeech(); });
 
+/* 库里没有新故事了 */
+function renderDone(){
+  state.view = 'done';
+  paintHead(null);
+  const p = progress();
+  const t = today();
+  const rows = Object.keys(t.results).map(id => {
+    const r = t.results[id]; const st = STORIES.find(x => x.id === id);
+    return '<div class="wr"><b>' + id + '</b><span>' + (st ? st.title : '') + ' · 记得 ' + ((r.known||[]).length) + '/20 · 填空 ' + r.right + '/' + r.total + '</span></div>';
+  }).join('') || '<div class="wr"><span>今天还没有记录。</span></div>';
+  $('#view').innerHTML =
+    (story.zh ? '<details class="zhbox"><summary>中文大意（做完才解锁喵）</summary><p>' + esc(story.zh) + '</p></details>' : '') +
+    '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
+      (p.need > 0 ? '今天已读 ' + p.words + '/100 词。后面的故事还没写进来。' : '今日已达标：' + p.words + '/100 词，' + GOAL_STORIES + ' 篇。') +
+    '</span></div>' +
+    '<div class="h2">故事读完了喵</div>' +
+    '<div class="hint">这一批故事都做过了。新的 5 篇要我写好、上传后才会出现喵；在那之前可以加练今天错的词。</div>' +
+    '<div class="wrongbox" style="margin-top:18px">' + rows + '</div>';
+  $('#bar').innerHTML = '<button class="btn" id="drill">加练今天错的词</button>';
+  $('#drill').onclick = () => startDrill();
+}
+
+/* 老版本升级上来：按今天已经做完的篇数把游标补上，避免重复读第一篇 */
+if (typeof db.cursor !== 'number'){
+  const doneToday = today().done || [];
+  const last = doneToday[doneToday.length - 1];
+  const i = last ? STORIES.findIndex(x => x.id === last) : -1;
+  db.cursor = i >= 0 ? i + 1 : 0;
+  save();
+}
+
 /* 启动 */
 const first = nextStory();
 if (first){ renderRead(first); }
-else { renderRead(STORIES[STORIES.length-1]); }
+else { renderDone(); }
 </script>
 </body>
 </html>
