@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b1815">
+<title>今日故事</title>
+<style>
+  :root{
+    --bg:#1b1815; --card:#241f1b; --line:#3a322b;
+    --text:#f2e9dd; --muted:#b7a696; --dim:#8a7a6b;
+    --accent:#e8834a; --accent-2:#f0a06a; --ok:#5aa87e; --bad:#d4695f;
+    --fs:19px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);overflow-x:hidden}
+  body{
+    font-family: system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:var(--fs); line-height:1.88;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 20px}
+
+  header{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(#1b1815 76%, rgba(27,24,21,.88));
+    border-bottom:1px solid var(--line);
+    padding:calc(10px + env(safe-area-inset-top)) 0 10px;
+  }
+  .hrow{display:flex;align-items:center;gap:8px}
+  .badge{font-size:12px;letter-spacing:.08em;color:var(--accent);border:1px solid rgba(232,131,74,.45);border-radius:999px;padding:2px 9px;flex:none}
+  .htitle{font-size:14px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .iconbtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;height:32px;padding:0 10px;font-size:12.5px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;flex:none}
+  .iconbtn:active{transform:scale(.97)}
+  .iconbtn.on{border-color:rgba(232,131,74,.6);color:var(--accent-2)}
+
+  .banner{display:flex;align-items:center;gap:10px;margin:12px 0 0;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.5}
+  .banner.warn{background:rgba(232,131,74,.12);border:1px solid rgba(232,131,74,.35);color:#f6c9a8}
+  .banner.done{background:rgba(90,168,126,.12);border:1px solid rgba(90,168,126,.35);color:#cfe9d9}
+  .banner span{flex:1}
+  .banner button{appearance:none;border:0;border-radius:9px;padding:6px 11px;font-size:12.5px;font-weight:700;background:var(--accent);color:#221611;cursor:pointer}
+
+  main{padding-top:16px}
+  .lede{font-size:13px;color:var(--dim);letter-spacing:.02em;margin-bottom:16px}
+  p.para{margin:0 0 24px;font-size:var(--fs);line-height:1.88;letter-spacing:.01em;border-radius:10px;transition:background .2s}
+  p.para.speaking{background:rgba(232,131,74,.08)}
+  .w{color:#ffe6c9;font-weight:650;border-bottom:1.5px dotted rgba(232,131,74,.55);cursor:pointer}
+  .g{font-size:11.5px;color:var(--muted);font-weight:400;margin:0 3px 0 1px;white-space:nowrap}
+  .spk{border:0;background:none;color:var(--dim);font-size:12px;padding:0 2px;cursor:pointer;vertical-align:2px}
+  .spk:active{color:var(--accent)}
+  body.hidegloss .g{display:none}
+
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:12px 20px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(rgba(27,24,21,0), #1b1815 34%)}
+  .bar .inner{max-width:680px;margin:0 auto}
+  .btn{appearance:none;border:0;width:100%;height:56px;border-radius:16px;background:var(--accent);color:#221611;font-size:17px;font-weight:700;letter-spacing:.02em;cursor:pointer;box-shadow:0 8px 24px rgba(232,131,74,.18)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:none}
+
+  .tmeta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);margin-bottom:6px}
+  .track{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:30px}
+  .track i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+  .prompt{font-size:15px;color:var(--muted);margin-bottom:12px}
+  .bigzh{font-size:30px;line-height:1.5;font-weight:700;margin:0 0 8px}
+  .reveal{margin-top:24px;border-top:1px solid var(--line);padding-top:24px}
+  .en{font-size:42px;line-height:1.25;font-weight:750;margin:0 0 6px}
+  .ipach{color:var(--dim);font-size:15px;font-family:ui-monospace,Menlo,monospace}
+  .grades{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}
+  .grade{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:14px;padding:14px 6px;font-size:14.5px;cursor:pointer;line-height:1.3}
+  .grade small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+  .grade:active{transform:scale(.98)}
+
+  .sent{font-size:19px;line-height:2.4;margin:0 0 20px}
+  .bl{display:inline-block;min-width:86px;text-align:center;vertical-align:baseline;line-height:1.3;border-bottom:2px solid rgba(232,131,74,.55);color:var(--accent-2);font-weight:650;padding:0 6px;cursor:pointer;margin:0 2px;border-radius:6px 6px 0 0}
+  .bl.empty{color:transparent}
+  .bl.sel{background:rgba(232,131,74,.16)}
+  .bl.done{border-bottom-color:rgba(90,168,126,.8);color:#cfead9}
+  .bank{display:flex;flex-wrap:wrap;gap:8px;padding:14px 0 6px;margin-top:4px;border-top:1px solid var(--line)}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 14px;font-size:14.5px;cursor:pointer}
+  .chip.used{opacity:.28;pointer-events:none}
+  .chip:active{transform:scale(.97)}
+
+  .score{display:flex;gap:12px;margin:6px 0 26px}
+  .sc{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .sc b{display:block;font-size:26px;line-height:1.2}
+  .sc span{font-size:12px;color:var(--dim)}
+  .wrongbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px;margin-bottom:22px}
+  .wr{display:flex;gap:10px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(58,50,43,.7)}
+  .wr:last-child{border-bottom:0}
+  .wr b{font-size:17px;color:#ffd9b8}
+  .wr span{font-size:13.5px;color:var(--muted);flex:1}
+  .due{font-size:11.5px;color:var(--dim);white-space:nowrap;flex:none}
+  .good{color:var(--ok)}
+  .h2{font-size:13px;letter-spacing:.1em;color:var(--dim);margin:26px 0 10px}
+  .hint{font-size:12.5px;color:var(--dim);line-height:1.8}
+
+  .sheet{position:fixed;inset:0;z-index:50;background:rgba(10,8,7,.6);display:none;align-items:flex-end}
+  .sheet.open{display:flex}
+  .sheet .in{width:100%;max-width:680px;margin:0 auto;background:var(--card);border-radius:20px 20px 0 0;padding:18px 20px calc(24px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+  .sheet h3{margin:0 0 4px;font-size:16px}
+  .sheet .sub{color:var(--dim);font-size:12.5px;margin-bottom:14px}
+  .qrow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(58,50,43,.7);font-size:14.5px}
+  .qrow:last-child{border-bottom:0}
+  .qid{font-size:12px;color:var(--accent);border:1px solid rgba(232,131,74,.4);border-radius:6px;padding:1px 6px}
+  .qrow .st{margin-left:auto;font-size:12px;color:var(--dim)}
+  .qrow.todo{opacity:.5}
+  .vrow{display:flex;align-items:center;gap:10px;margin-top:6px}
+  .vrow label{font-size:13px;color:var(--muted)}
+  select.vsel{flex:1;appearance:none;background:var(--card2,#2b2520);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px;font-size:13px}
+
+  .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+  .seg button{appearance:none;border:0;background:transparent;color:var(--muted);font-size:12px;padding:0 9px;height:32px;cursor:pointer}
+  .seg button.on{background:rgba(232,131,74,.2);color:var(--accent-2);font-weight:700}
+  .tools{display:flex;gap:8px;margin:0 0 16px}
+  .toolbtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer}
+  .toolbtn.on{color:var(--accent-2);border-color:rgba(232,131,74,.5)}
+  .accents{display:flex;gap:10px;margin:12px 0 2px}
+  .accbtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:9px 16px;font-size:14px;cursor:pointer}
+  .accbtn:active{transform:scale(.97)}
+  .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#332b24;color:#f6ecdf;border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-size:13px;z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;max-width:80vw;text-align:center}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="hrow">
+      <span class="badge" id="sbadge">S01</span>
+      <span class="htitle" id="stitle">The Last Orbit</span>
+      <div class="seg" id="accentSeg">
+        <button type="button" data-accent="us" class="on">美音</button>
+        <button type="button" data-accent="uk">英音</button>
+      </div>
+      <button class="iconbtn" id="queueBtn" type="button">队列</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="view"></main>
+<div class="bar"><div class="inner" id="bar"></div></div>
+
+<div class="sheet" id="sheet">
+  <div class="in">
+    <h3>今日队列</h3>
+    <div class="sub" id="qsub"></div>
+    <div id="qlist"></div>
+    <div class="hint" style="margin-top:8px">右上角「美音 / 英音」切换口音；手机没装对应语音包时会退回另一种。</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==DATA-START== */
+const GOAL_STORIES = 5;    // 每日下限：5 篇 = 100 词
+const STORIES = [
+{
+  id:'S01', title:'The Last Orbit', meta:'雅思 · 20 词',
+  words:{
+    Japanese:{short:'adj. 日本的', ipa:'/ˌdʒæpəˈniːz/', senses:[{pos:'adj./n.',zh:'日本的；日本人'}]},
+    solitary:{short:'adj. 孤独', ipa:'/ˈsɒlətri/', senses:[{pos:'adj.',zh:'独自的，孤独的'}]},
+    slim:{short:'adj. 纤细', ipa:'/slɪm/', senses:[{pos:'adj.',zh:'纤细的；微小的'}]},
+    unsocial:{short:'adj. 孤僻', ipa:'/ˌʌnˈsəʊʃl/', senses:[{pos:'adj.',zh:'不爱交际的'}]},
+    cosmic:{short:'adj. 宇宙', ipa:'/ˈkɒzmɪk/', senses:[{pos:'adj.',zh:'宇宙的'}]},
+    inhabit:{short:'v. 栖居', ipa:'/ɪnˈhæbɪt/', senses:[{pos:'v.',zh:'居住于，栖居于'}]},
+    doctrine:{short:'n. 信条', ipa:'/ˈdɒktrɪn/', senses:[{pos:'n.',zh:'教义，信条'}]},
+    fraught:{short:'adj. 充满', ipa:'/frɔːt/', senses:[{pos:'adj.',zh:'充满（问题、危险）的'}]},
+    reimburse:{short:'v. 报销', ipa:'/ˌriːɪmˈbɜːs/', senses:[{pos:'v.',zh:'报销，偿还'}]},
+    options:{short:'n. 选项', ipa:'/ˈɒpʃnz/', senses:[{pos:'n.',zh:'选择，选项（option 的复数）'}]},
+    imperative:{short:'adj. 必要', ipa:'/ɪmˈperətɪv/', senses:[{pos:'adj.',zh:'迫切的，必要的'}]},
+    fingers:{short:'n. 手指', ipa:'/ˈfɪŋɡəz/', senses:[{pos:'n.',zh:'手指（finger 的复数）'}]},
+    blink:{short:'v. 眨眼', ipa:'/blɪŋk/', senses:[{pos:'v.',zh:'眨眼'}]},
+    metaphor:{short:'n. 隐喻', ipa:'/ˈmetəfə/', senses:[{pos:'n.',zh:'隐喻，比喻'}]},
+    applaud:{short:'v. 称赞', ipa:'/əˈplɔːd/', senses:[{pos:'v.',zh:'鼓掌；称赞'}]},
+    ornament:{short:'n. 饰品', ipa:'/ˈɔːnəmənt/', senses:[{pos:'n.',zh:'装饰品'}]},
+    refund:{short:'n. 退款', ipa:'/ˈriːfʌnd/', senses:[{pos:'n./v.',zh:'退款；退还'}]},
+    expulsion:{short:'n. 开除', ipa:'/ɪkˈspʌlʃn/', senses:[{pos:'n.',zh:'驱逐，开除'}]},
+    dispose:{short:'v. 处理', ipa:'/dɪˈspəʊz/', senses:[{pos:'v.',zh:'处理，丢弃（dispose of）'}]},
+    sting:{short:'n. 刺痛', ipa:'/stɪŋ/', senses:[{pos:'n./v.',zh:'刺痛；刺'}]}
+  },
+  paras:[
+    "Dr. Ito, a {Japanese} astronomer, took a {solitary} post on a {slim} island. Her neighbours called her {unsocial}, but she was only busy: the sky there was the clearest place to watch a {cosmic} storm that might {inhabit} it for weeks.",
+    "The station ran on one {doctrine}: measure, write, repeat. The week was {fraught} with small failures — a cracked lens, a dead radio, a bill she had to {reimburse} from her own pocket.",
+    "When the storm came, she had two {options}: close the dome and lose the data, or keep it open and risk the lens. It was {imperative} to decide fast. She counted to ten on her {fingers}, did not {blink}, and kept it open.",
+    "The storm passed like a {metaphor} for luck. Later the university would {applaud} her, hang a silver {ornament} in the hall, and send a {refund} for the lens she had paid for herself — though no money could erase the {expulsion} threat that had once hung over her contract.",
+    "She never learned to {dispose} of that old lens. It sits in the corner, and once a year it gives her a small {sting}: the memory of how close she came to quitting."
+  ],
+  cards:[['inhabit','居住于，栖居于'],['fraught','充满（问题、危险）的'],['unsocial','不爱交际的'],['slim','纤细的；微小的'],['applaud','鼓掌；称赞'],['doctrine','教义，信条'],['solitary','独自的，孤独的'],['cosmic','宇宙的'],['reimburse','报销，偿还'],['options','选择，选项'],['fingers','手指'],['imperative','迫切的，必要的'],['Japanese','日本的；日本人'],['blink','眨眼'],['ornament','装饰品'],['expulsion','驱逐，开除'],['refund','退款'],['metaphor','隐喻，比喻'],['dispose','处理，丢弃'],['sting','刺痛；刺']],
+  fills:[
+    {text:'Dr. Ito, a {0} astronomer, took a {1} post on a slim island.', a:['Japanese','solitary']},
+    {text:'Her neighbours called her {0}, but she was only busy watching a {1} storm.', a:['unsocial','cosmic']},
+    {text:'The storm might {0} the sky for weeks; the chance of good data was {1}.', a:['inhabit','slim']},
+    {text:'The station ran on one {0}: measure, write, repeat — and the week was {1} with small failures.', a:['doctrine','fraught']},
+    {text:'She had to {0} a bill from her own pocket, and when the storm came she had two {1}.', a:['reimburse','options']},
+    {text:'It was {0} to decide fast; she counted to ten on her {1}.', a:['imperative','fingers']},
+    {text:'She did not {0}, and the storm passed like a {1} for luck.', a:['blink','metaphor']},
+    {text:'Later the university would {0} her and hang a silver {1} in the hall.', a:['applaud','ornament']},
+    {text:'No money could erase the {0} threat; they only sent a {1} for the lens.', a:['expulsion','refund']},
+    {text:'She never learned to {0} of that old lens, and once a year it gave her a small {1}.', a:['dispose','sting']}
+  ]
+},
+{
+  id:'S02', title:'The Salt Machine', meta:'雅思 · 20 词',
+  words:{
+    saline:{short:'adj. 含盐', senses:[{pos:'adj.',zh:'含盐的，咸的'}]},
+    elder:{short:'n. 长者', senses:[{pos:'n.',zh:'长者，年长者'}]},
+    zest:{short:'n. 热情', senses:[{pos:'n.',zh:'热情，兴致'}]},
+    daily:{short:'adj. 每日', senses:[{pos:'adj.',zh:'每日的，日常的'}]},
+    shepherd:{short:'n. 牧羊人', senses:[{pos:'n.',zh:'牧羊人'}]},
+    slit:{short:'n. 狭缝', senses:[{pos:'n.',zh:'狭缝；v. 切开'}]},
+    general:{short:'adj. 全体', senses:[{pos:'adj.',zh:'全体的，总的'}]},
+    launch:{short:'v. 发起', senses:[{pos:'v.',zh:'发起，推出'}]},
+    training:{short:'n. 培训', senses:[{pos:'n.',zh:'培训，训练'}]},
+    condition:{short:'n. 条件', senses:[{pos:'n.',zh:'条件'}]},
+    studies:{short:'n. 学业', senses:[{pos:'n.',zh:'学业，研究（study 的复数）'}]},
+    tedious:{short:'adj. 乏味', senses:[{pos:'adj.',zh:'乏味的，单调的'}]},
+    expectancy:{short:'n. 期待', senses:[{pos:'n.',zh:'期待，预期'}]},
+    anonymous:{short:'adj. 匿名', senses:[{pos:'adj.',zh:'匿名的'}]},
+    monstrous:{short:'adj. 巨大', senses:[{pos:'adj.',zh:'巨大的；骇人的'}]},
+    formidable:{short:'adj. 强大', senses:[{pos:'adj.',zh:'强大的，令人敬畏的'}]},
+    type:{short:'n. 类型', senses:[{pos:'n.',zh:'类型，种类'}]},
+    lavish:{short:'adj. 奢华', senses:[{pos:'adj.',zh:'奢华的；v. 挥霍'}]},
+    original:{short:'adj. 原创', senses:[{pos:'adj.',zh:'原创的，最初的'}]},
+    leisure:{short:'n. 闲暇', senses:[{pos:'n.',zh:'闲暇，空闲'}]}
+  },
+  paras:[
+    "The village lay on {saline} soil, and the {elder} who kept the sheep was the only one with {zest} left. Every {daily} round he walked the marsh with his {shepherd}'s stick, past a {slit} in the fence that nobody mended.",
+    "A {general} meeting was called: the council wanted to {launch} a {training} programme for young farmers. The {condition} was simple — finish the {studies} first. They were {tedious}, and {expectancy} turned to boredom by the third week.",
+    "Then an {anonymous} donor paid for a {monstrous} machine that could cut salt grass. It was a {formidable} thing, and its {type} was unlike anything in the valley. The council threw a {lavish} party, with {original} songs written for the night.",
+    "But in the morning the machine sat in the {leisure} of the yard, useless: nobody had been trained to run it. The elder laughed. 'Buy the tool, skip the work,' he said, and went back to his sheep."
+  ],
+  cards:[['saline','含盐的'],['elder','长者'],['zest','热情'],['daily','每日的'],['shepherd','牧羊人'],['slit','狭缝'],['general','全体的'],['launch','发起'],['training','培训'],['condition','条件'],['studies','学业'],['tedious','乏味的'],['expectancy','期待'],['anonymous','匿名的'],['monstrous','巨大的'],['formidable','强大的'],['type','类型'],['lavish','奢华的'],['original','原创的'],['leisure','闲暇']],
+  fills:[
+    {text:'The village lay on {0} soil, and the {1} who kept the sheep was the only one with zest left.', a:['saline','elder']},
+    {text:'Every {0} round he walked the marsh with his {1}\u2019s stick.', a:['daily','shepherd']},
+    {text:'He walked past a {0} in the fence that nobody mended; a {1} meeting was called.', a:['slit','general']},
+    {text:'The council wanted to {0} a {1} programme for young farmers.', a:['launch','training']},
+    {text:'The {0} was simple — finish the {1} first.', a:['condition','studies']},
+    {text:'They were {0}, and {1} turned to boredom by the third week.', a:['tedious','expectancy']},
+    {text:'Then an {0} donor paid for a {1} machine that could cut salt grass.', a:['anonymous','monstrous']},
+    {text:'It was a {0} thing, and its {1} was unlike anything in the valley.', a:['formidable','type']},
+    {text:'The council threw a {0} party, with {1} songs written for the night.', a:['lavish','original']},
+    {text:'In the {0} of the yard the machine sat useless, and the elder still had all the {1}.', a:['leisure','zest']}
+  ]
+},
+{
+  id:'S03', title:'Fifty Years of Signal', meta:'雅思 · 20 词',
+  words:{
+    radio:{short:'n. 电台', senses:[{pos:'n.',zh:'收音机；电台'}]},
+    industrial:{short:'adj. 工业', senses:[{pos:'adj.',zh:'工业的'}]},
+    forte:{short:'n. 长处', senses:[{pos:'n.',zh:'长处，强项'}]},
+    occasion:{short:'n. 场合', senses:[{pos:'n.',zh:'场合，时刻'}]},
+    vehement:{short:'adj. 激烈', senses:[{pos:'adj.',zh:'激烈的，强烈的'}]},
+    improvement:{short:'n. 改善', senses:[{pos:'n.',zh:'改善，改进'}]},
+    repetition:{short:'n. 重复', senses:[{pos:'n.',zh:'重复'}]},
+    corrode:{short:'v. 腐蚀', senses:[{pos:'v.',zh:'腐蚀，侵蚀'}]},
+    drain:{short:'v. 排水', senses:[{pos:'v.',zh:'排水；n. 下水道'}]},
+    pump:{short:'n. 泵', senses:[{pos:'n.',zh:'泵，抽水机'}]},
+    cable:{short:'n. 电缆', senses:[{pos:'n.',zh:'电缆，缆绳'}]},
+    blast:{short:'n. 一阵', senses:[{pos:'n.',zh:'一阵（强风、水流）；爆炸'}]},
+    appendix:{short:'n. 附录', senses:[{pos:'n.',zh:'附录；阑尾'}]},
+    financial:{short:'adj. 财务', senses:[{pos:'adj.',zh:'财务的，金融的'}]},
+    assess:{short:'v. 评估', senses:[{pos:'v.',zh:'评估，估算'}]},
+    diplomas:{short:'n. 文凭', senses:[{pos:'n.',zh:'文凭（diploma 的复数）'}]},
+    obnoxious:{short:'adj. 讨厌', senses:[{pos:'adj.',zh:'讨厌的，令人不快的'}]},
+    hold:{short:'n. 掌控', senses:[{pos:'n.',zh:'掌控，影响；v. 握住'}]},
+    satisfaction:{short:'n. 满足', senses:[{pos:'n.',zh:'满足，满意'}]},
+    Africa:{short:'n. 非洲', senses:[{pos:'n.',zh:'非洲'}]}
+  },
+  paras:[
+    "The {radio} station in the {industrial} town had one {forte}: it never hung up on anyone. On the {occasion} of the plant's fiftieth year, the mayor gave a {vehement} speech about {improvement}, and the station recorded every {repetition} of it.",
+    "Behind the studio, pipes had begun to {corrode}, and salt water would {drain} into the yard. An engineer fixed a {pump} and a new {cable}, and the {blast} of water soaked the {appendix} of his report — three pages of figures on the town's {financial} state.",
+    "He had to {assess} the damage alone. His {diplomas} hung above the desk, but his real skill was patience: he counted every fault until the numbers held. The {obnoxious} neighbour who called him daily got no {hold} on him.",
+    "By evening the yard was dry, and he felt a quiet {satisfaction}. Somewhere south of {Africa}, he wrote, the same pump was working; here it had simply been forgotten."
+  ],
+  cards:[['radio','电台'],['industrial','工业的'],['forte','长处'],['occasion','场合'],['vehement','激烈的'],['improvement','改善'],['repetition','重复'],['corrode','腐蚀'],['drain','排水'],['pump','泵'],['cable','电缆'],['blast','一阵'],['appendix','附录'],['financial','财务的'],['assess','评估'],['diplomas','文凭'],['obnoxious','讨厌的'],['hold','掌控'],['satisfaction','满足'],['Africa','非洲']],
+  fills:[
+    {text:'The {0} station in the {1} town had one forte.', a:['radio','industrial']},
+    {text:'Its {0} was simple, and on the {1} of the plant\u2019s fiftieth year the mayor spoke.', a:['forte','occasion']},
+    {text:'He gave a {0} speech about {1}.', a:['vehement','improvement']},
+    {text:'The station recorded every {0} of it; behind the studio, the pipes had begun to {1}.', a:['repetition','corrode']},
+    {text:'The pipes began to {0} into the yard, so an engineer fixed a {1}.', a:['drain','pump']},
+    {text:'He added a new {0}, and the {1} of water soaked his report.', a:['cable','blast']},
+    {text:'It soaked the {0} of the report — three pages on the town\u2019s {1} state.', a:['appendix','financial']},
+    {text:'He had to {0} the damage alone; his {1} hung above the desk.', a:['assess','diplomas']},
+    {text:'The {0} neighbour who called daily got no {1} on him.', a:['obnoxious','hold']},
+    {text:'By evening he felt a quiet {0}; somewhere south of {1} the same pump was working.', a:['satisfaction','Africa']}
+  ]
+},
+{
+  id:'S04', title:'A Room on the Cape', meta:'雅思 · 20 词',
+  words:{
+    forecast:{short:'n. 预报', senses:[{pos:'n.',zh:'预报，预测'}]},
+    cape:{short:'n. 海角', senses:[{pos:'n.',zh:'海角，岬'}]},
+    receptionist:{short:'n. 前台', senses:[{pos:'n.',zh:'接待员，前台'}]},
+    blouse:{short:'n. 女衬衫', senses:[{pos:'n.',zh:'女衬衫'}]},
+    perfect:{short:'adj. 完美', senses:[{pos:'adj.',zh:'完美的'}]},
+    berth:{short:'n. 铺位', senses:[{pos:'n.',zh:'铺位，泊位'}]},
+    levy:{short:'n. 征税', senses:[{pos:'n.',zh:'征税；v. 征收'}]},
+    supplementary:{short:'adj. 补充', senses:[{pos:'adj.',zh:'补充的，附加的'}]},
+    imperial:{short:'adj. 帝国', senses:[{pos:'adj.',zh:'帝国的，威严的'}]},
+    sample:{short:'n. 样品', senses:[{pos:'n.',zh:'样品，试样'}]},
+    martial:{short:'adj. 武术', senses:[{pos:'adj.',zh:'武术的，军事的'}]},
+    stereotype:{short:'n. 刻板印象', senses:[{pos:'n.',zh:'刻板印象'}]},
+    care:{short:'n. 在意', senses:[{pos:'n.',zh:'在意，关心；v. 在乎'}]},
+    simultaneous:{short:'adj. 同时', senses:[{pos:'adj.',zh:'同时发生的'}]},
+    incongruous:{short:'adj. 不协调', senses:[{pos:'adj.',zh:'不协调的，格格不入的'}]},
+    scent:{short:'n. 气味', senses:[{pos:'n.',zh:'气味，香味'}]},
+    dissipate:{short:'v. 消散', senses:[{pos:'v.',zh:'消散，驱散'}]},
+    glow:{short:'n. 微光', senses:[{pos:'n.',zh:'微光，余晖'}]},
+    species:{short:'n. 物种', senses:[{pos:'n.',zh:'物种（单复数同形）'}]},
+    content:{short:'adj. 满足', senses:[{pos:'adj.',zh:'满足的；n. 内容'}]}
+  },
+  paras:[
+    "The {forecast} promised wind, and by noon the {cape} was white with it. The hotel's {receptionist}, in a blue {blouse}, took my bag and gave me a {perfect} room on the second floor — a {berth} with a window full of sea.",
+    "The town had voted for a new {levy} on tourists. '{supplementary} income,' the mayor called it, with {imperial} confidence. I paid, and a {sample} of local cider arrived with the key.",
+    "In the lounge a {martial} arts class was starting. The teacher, an old woman, broke a {stereotype} with every move: no {care} for grace, only the {simultaneous} shift of weight. It was {incongruous} with the tea cups, and completely convincing. The {scent} of salt and pine stayed in the room.",
+    "At dusk the wind began to {dissipate}, and the sea took on a {glow}. Two {species} of gull argued on the rail. My {content} was simple: one more night here, and nothing to do."
+  ],
+  cards:[['forecast','预报'],['cape','海角'],['receptionist','前台'],['blouse','女衬衫'],['perfect','完美的'],['berth','铺位'],['levy','征税'],['supplementary','补充的'],['imperial','帝国的'],['sample','样品'],['martial','武术的'],['stereotype','刻板印象'],['care','在意'],['simultaneous','同时的'],['incongruous','不协调的'],['scent','气味'],['dissipate','消散'],['glow','微光'],['species','物种'],['content','满足的']],
+  fills:[
+    {text:'The {0} promised wind, and by noon the {1} was white with it.', a:['forecast','cape']},
+    {text:'The hotel\u2019s {0}, in a blue {1}, took my bag.', a:['receptionist','blouse']},
+    {text:'She gave me a {0} room on the second floor — a {1} with a window full of sea.', a:['perfect','berth']},
+    {text:'The town had voted for a new {0} on tourists — \u201c{1} income,\u201d the mayor called it.', a:['levy','supplementary']},
+    {text:'He said it with {0} confidence, and a {1} of local cider arrived with the key.', a:['imperial','sample']},
+    {text:'In the lounge a {0} arts class was starting, and the teacher broke a {1} with every move.', a:['martial','stereotype']},
+    {text:'She had no {0} for grace, only the {1} shift of weight.', a:['care','simultaneous']},
+    {text:'It was {0} with the tea cups, and the {1} of salt and pine stayed in the room.', a:['incongruous','scent']},
+    {text:'At dusk the wind began to {0}, and the sea took on a {1}.', a:['dissipate','glow']},
+    {text:'Two {0} of gull argued on the rail; my {1} was simple.', a:['species','content']}
+  ]
+},
+{
+  id:'S05', title:'The Repair Cafe', meta:'雅思 · 20 词',
+  words:{
+    downtown:{short:'n. 市中心', senses:[{pos:'n./adv.',zh:'市中心；在市中心'}]},
+    furniture:{short:'n. 家具', senses:[{pos:'n.',zh:'家具'}]},
+    ultimatum:{short:'n. 最后通牒', senses:[{pos:'n.',zh:'最后通牒'}]},
+    dismay:{short:'n. 沮丧', senses:[{pos:'n.',zh:'沮丧，惊愕'}]},
+    consumer:{short:'n. 消费者', senses:[{pos:'n.',zh:'消费者'}]},
+    conceive:{short:'v. 构想', senses:[{pos:'v.',zh:'构想，设想'}]},
+    enroll:{short:'v. 报名', senses:[{pos:'v.',zh:'报名，注册'}]},
+    eligible:{short:'adj. 有资格', senses:[{pos:'adj.',zh:'有资格的'}]},
+    nurture:{short:'v. 培育', senses:[{pos:'v.',zh:'培育，滋养'}]},
+    exchange:{short:'v. 交换', senses:[{pos:'v.',zh:'交换；n. 交换'}]},
+    foster:{short:'v. 培养', senses:[{pos:'v.',zh:'培养，促进'}]},
+    historic:{short:'adj. 历史性', senses:[{pos:'adj.',zh:'历史性的，有历史意义的'}]},
+    superior:{short:'adj. 高人一等', senses:[{pos:'adj.',zh:'高人一等的；更好的'}]},
+    tape:{short:'n. 胶带', senses:[{pos:'n.',zh:'胶带，磁带'}]},
+    haste:{short:'n. 仓促', senses:[{pos:'n.',zh:'仓促，匆忙'}]},
+    apologetic:{short:'adj. 抱歉', senses:[{pos:'adj.',zh:'抱歉的，歉意的'}]},
+    odds:{short:'n. 可能性', senses:[{pos:'n.',zh:'可能性，几率'}]},
+    articles:{short:'n. 文章', senses:[{pos:'n.',zh:'文章（article 的复数）'}]},
+    end:{short:'n. 结束', senses:[{pos:'n.',zh:'结束，末尾'}]},
+    elevate:{short:'v. 提升', senses:[{pos:'v.',zh:'提升，提高'}]}
+  },
+  paras:[
+    "The shop stood {downtown}, between a bank and a shoe repair, and sold {furniture} nobody under fifty wanted. When the lease came with an {ultimatum} — pay more or leave — the owner felt only {dismay}.",
+    "She had been a {consumer} of her own hopes for years. Now she had to {conceive} a different plan. She chose to {enroll} in a night course on marketing, was {eligible} for a small grant, and began to {nurture} the idea of a repair café: {exchange} a broken chair, learn a skill, {foster} a small community of fixers.",
+    "The course met in a {historic} hall. The teacher, {superior} to every excuse, put a strip of {tape} on the door with one note: '{haste} is not a plan.' Her {apologetic} students laughed anyway. The {odds} were poor, but she had read the {articles} about shops like hers.",
+    "By the {end} of the year the café had done more to {elevate} the street's mood than any sale. She still sold furniture — but now people brought it back to be fixed, and stayed."
+  ],
+  cards:[['downtown','市中心'],['furniture','家具'],['ultimatum','最后通牒'],['dismay','沮丧'],['consumer','消费者'],['conceive','构想'],['enroll','报名'],['eligible','有资格的'],['nurture','培育'],['exchange','交换'],['foster','培养'],['historic','历史性的'],['superior','高人一等的'],['tape','胶带'],['haste','仓促'],['apologetic','抱歉的'],['odds','可能性'],['articles','文章'],['end','结束'],['elevate','提升']],
+  fills:[
+    {text:'The shop stood {0}, and sold {1} nobody under fifty wanted.', a:['downtown','furniture']},
+    {text:'The lease came as an {0} — pay more or leave — and the owner felt only {1}.', a:['ultimatum','dismay']},
+    {text:'She had been a {0} of her own hopes, and now she had to {1} a different plan.', a:['consumer','conceive']},
+    {text:'She chose to {0} in a night course, and was {1} for a small grant.', a:['enroll','eligible']},
+    {text:'She began to {0} the idea of a repair café: {1} a broken chair, learn a skill.', a:['nurture','exchange']},
+    {text:'She wanted to {0} a small community of fixers, and the course met in a {1} hall.', a:['foster','historic']},
+    {text:'The teacher was {0} to every excuse, and put a strip of {1} on the door.', a:['superior','tape']},
+    {text:'The note read \u201c{0} is not a plan\u201d, and her {1} students laughed anyway.', a:['haste','apologetic']},
+    {text:'The {0} were poor, but she had read the {1} about shops like hers.', a:['odds','articles']},
+    {text:'By the {0} of the year the café had done more to {1} the street\u2019s mood.', a:['end','elevate']}
+  ]
+}
+];
+/* ==DATA-END== */
+
+/* ───────────────────────── 状态 ───────────────────────── */
+const KEY = 'vs.story.v2';
+const store = {
+  failed:false,
+  read(){
+    try { return JSON.parse(localStorage.getItem(KEY)) || {days:{}}; } catch { return {days:{}}; }
+  },
+  write(o){
+    try { localStorage.setItem(KEY, JSON.stringify(o)); }
+    catch { this.failed = true; }
+  }
+};
+const db = store.read();
+db.days = db.days || {};
+function dayKey(d){ d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function today(){
+  const k = dayKey();
+  db.days[k] = db.days[k] || {done:[], results:{}};
+  return db.days[k];
+}
+function save(){ store.write(db); }
+
+const state = {
+  view:'read',
+  story:null,
+  showGloss:true,
+  aIndex:0, aResults:[], revealed:false,
+  bAnswers:{}, bSel:null, bank:null,
+  drill:null,
+  speaking:false
+};
+
+/* ───────────────────────── 发音 ───────────────────────── */
+let voices = [];
+function loadVoices(){
+  if (!('speechSynthesis' in window)) return;
+  voices = window.speechSynthesis.getVoices() || [];
+}
+loadVoices();
+if ('speechSynthesis' in window) window.speechSynthesis.addEventListener?.('voiceschanged', loadVoices);
+function enVoices(){
+  if (!voices.length) loadVoices();
+  return voices.filter(v => /^en(-|_)/i.test(v.lang));
+}
+function accentOf(){ return db.accent === 'uk' ? 'uk' : 'us'; }
+function voiceFor(accent){
+  const list = enVoices();
+  if (!list.length) return null;
+  const tag = accent === 'uk' ? /en[-_]GB/i : /en[-_]US/i;
+  const prefer = accent === 'uk'
+    ? /libby|sonia|ryan|hazel|george|kate|serena|google uk english/i
+    : /aria|jenny|zira|samantha|david|guy|michelle|google us english/i;
+  return list.find(v => tag.test(v.lang) && prefer.test(v.name))
+      || list.find(v => tag.test(v.lang))
+      || list.find(v => prefer.test(v.name))
+      || list[0];
+}
+function utter(text, rate, accent){
+  const u = new SpeechSynthesisUtterance(String(text));
+  const v = voiceFor(accent || accentOf());
+  if (v){ u.voice = v; u.lang = v.lang; } else { u.lang = accent === 'uk' ? 'en-GB' : 'en-US'; }
+  u.rate = rate || 0.9; u.pitch = 1; u.volume = 1;
+  return u;
+}
+function speak(word, accent){
+  if (!('speechSynthesis' in window)){ toast('这个浏览器没有语音合成，先看音标吧'); return; }
+  try {
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter(word, 0.88, accent || accentOf()));
+  } catch { toast('这台设备没装英语语音包，发音跳过'); }
+}
+function stopSpeech(){
+  state.speaking = false;
+  document.querySelectorAll('p.para.speaking').forEach(p => p.classList.remove('speaking'));
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+}
+
+/* ───────────────────────── 小工具 ───────────────────────── */
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function glossOf(story, key){
+  const w = story.words[key];
+  if (!w) return '';
+  if (w.short) return w.short;
+  return w.senses.filter(s => s.zh).map((s,i,arr) => arr.length>1 ? (i+1)+'. '+s.pos+' '+s.zh : s.pos+' '+s.zh).join('　');
+}
+function datePlus(n){ const d = new Date(); d.setDate(d.getDate()+n); return (d.getMonth()+1)+'月'+d.getDate()+'日'; }
+
+/* ───────────────────────── 今日进度 ───────────────────────── */
+function progress(){
+  const t = today();
+  const done = t.done.filter(id => STORIES.some(s => s.id === id));
+  return { done, words: done.length * 20, need: Math.max(0, GOAL_STORIES - done.length) };
+}
+function nextStory(){
+  const t = today();
+  return STORIES.find(s => !t.done.includes(s.id)) || null;
+}
+
+/* ───────────────────────── 顶栏 ───────────────────────── */
+function paintHead(story){
+  $('#sbadge').textContent = story ? story.id : '✓';
+  $('#stitle').textContent = story ? story.title : '今日已完成';
+}
+
+/* ───────────────────────── 阅读 ───────────────────────── */
+function renderRead(story){
+  state.view = 'read';
+  state.story = story;
+  paintHead(story);
+  document.body.classList.toggle('hidegloss', !state.showGloss);
+
+  const p = progress();
+  const banner = p.need > 0
+    ? '<div class="banner warn"><span>今天还差 <b>' + p.need + '</b> 篇（' + (p.need*20) + ' 词）就满 100。已完成 ' + p.done.length + '/' + GOAL_STORIES + ' 篇。</span></div>'
+    : '<div class="banner done"><span>今日已达标：' + p.words + '/100 词（' + p.done.length + ' 篇）。想加练可以继续。</span></div>';
+
+  const body = story.paras.map(para => '<p class="para">' + para.replace(/\{([A-Za-z]+)\}/g, (_, k) =>
+    '<span class="w" data-w="' + k + '">' + k + '</span>' +
+    '<button class="spk" data-spk="' + k + '">🔊</button>' +
+    '<span class="g">（' + esc(glossOf(story, k)) + '）</span>'
+  ) + '</p>').join('');
+
+  $('#view').innerHTML = banner +
+    '<div class="tools">' +
+      '<button class="toolbtn" id="listenBtn" type="button">🔊 朗读整篇</button>' +
+      '<button class="toolbtn' + (state.showGloss ? ' on' : '') + '" id="glossBtn" type="button">释义：' + (state.showGloss ? '开' : '关') + '</button>' +
+    '</div>' +
+    '<div class="lede">' + esc(story.meta) + ' · 点词听发音（口音看右上角）</div>' +
+    body +
+    '<div class="hint">' + (p.need > 0 ? '读完这篇还有 ' + (p.need-1) + ' 篇。' : '今日任务完成，剩下的时间算加练。') + '</div>';
+
+  $('#listenBtn').onclick = onListen;
+  $('#glossBtn').onclick = () => { state.showGloss = !state.showGloss; renderRead(story); };
+
+  $('#bar').innerHTML = '<button class="btn" id="goTest">读完了，考我 →</button>';
+  $('#goTest').onclick = () => { state.aIndex = 0; state.aResults = []; state.revealed = false; state.bAnswers = {}; state.bSel = null; state.bank = null; renderTestA(story); };
+}
+
+/* ───────────────────────── 卡片回忆 ───────────────────────── */
+function renderTestA(story, list){
+  state.view = 'testA';
+  document.body.classList.add('hidegloss');
+  const cards = list || story.cards;
+  const [word, zh] = cards[state.aIndex];
+  const n = state.aIndex + 1, total = cards.length;
+
+  $('#view').innerHTML =
+    '<div class="tmeta"><span>卡片回忆 ' + n + ' / ' + total + '</span><span>先想，再翻</span></div>' +
+    '<div class="track"><i style="width:' + (state.aIndex/total*100) + '%"></i></div>' +
+    '<div class="prompt">看到中文，回忆那个英文词：</div>' +
+    '<h1 class="bigzh">' + esc(zh) + '</h1>' +
+    (state.revealed
+      ? '<div class="reveal">' +
+          '<div class="en">' + esc(word) + '</div>' +
+          '<div class="accents">' +
+            '<button class="accbtn" data-spk="' + word + '" data-accent="us">🔊 美音</button>' +
+            '<button class="accbtn" data-spk="' + word + '" data-accent="uk">🔊 英音</button>' +
+          '</div>' +
+          (story.words[word] && story.words[word].ipa ? '<div class="ipach">' + esc(story.words[word].ipa) + '</div>' : '') +
+          '<div class="grades">' +
+            '<button class="grade" data-g="forgot">😵 忘了<small>+1 天复习</small></button>' +
+            '<button class="grade" data-g="fuzzy">🤔 模糊<small>+3 天复习</small></button>' +
+            '<button class="grade" data-g="known">😎 记得<small>+7 天复习</small></button>' +
+          '</div>' +
+        '</div>'
+      : '<div class="reveal" style="border:0;padding-top:6px"><button class="btn ghost" id="revealBtn" style="height:52px">显示答案</button></div>');
+
+  $('#bar').innerHTML = '<div class="hint" style="text-align:center">' + (state.revealed ? '诚实一点，选一个' : '想不起来也没关系，翻看答案') + '</div>';
+
+  if (!state.revealed){
+    $('#revealBtn').onclick = () => { state.revealed = true; renderTestA(story, list); };
+  } else {
+    document.querySelectorAll('.grade').forEach(b => {
+      b.onclick = () => {
+        state.aResults.push(b.dataset.g);
+        state.revealed = false;
+        state.aIndex++;
+        if (state.aIndex >= cards.length){
+          if (list) return renderDrillResult(story, cards);
+          return renderTestB(story);
+        }
+        renderTestA(story, list);
+      };
+    });
+  }
+}
+
+/* ───────────────────────── 句子填空 ───────────────────────── */
+function renderTestB(story){
+  state.view = 'testB';
+  document.body.classList.add('hidegloss');
+  const blanks = [];
+  story.fills.forEach((f,i) => f.a.forEach((_,j) => blanks.push(i+':'+j)));
+  if (!state.bank) state.bank = story.cards.map(c => c[0]).slice().sort(() => Math.random() - 0.5);
+
+  const html = story.fills.map((f,i) =>
+    '<p class="sent">' + f.text.replace(/\{(\d)\}/g, (_,j) => {
+      const k = i+':'+j, v = state.bAnswers[k];
+      const cls = 'bl' + (v ? ' done' : ' empty') + (state.bSel === k ? ' sel' : '');
+      return '<span class="' + cls + '" data-blank="' + k + '">' + (v ? esc(v) : '&nbsp;&nbsp;&nbsp;') + '</span>';
+    }) + '</p>').join('');
+
+  $('#view').innerHTML =
+    '<div class="tmeta"><span>句子填空 · ' + blanks.length + ' 空</span><span>点空位，再点词</span></div>' +
+    '<div class="track"><i style="width:' + (Object.keys(state.bAnswers).length/blanks.length*100) + '%"></i></div>' +
+    html +
+    '<div class="h2">词块（点一个空，再点一个词）</div>' +
+    '<div class="bank">' + state.bank.map(w =>
+      '<button class="chip' + (Object.values(state.bAnswers).includes(w) ? ' used' : '') + '" data-chip="' + w + '">' + w + '</button>'
+    ).join('') + '</div>';
+
+  $('#bar').innerHTML = '<button class="btn" id="submitB">提交答案</button>';
+
+  document.querySelectorAll('[data-blank]').forEach(el => {
+    el.onclick = () => {
+      const k = el.dataset.blank;
+      if (state.bAnswers[k]) delete state.bAnswers[k];
+      state.bSel = (state.bSel === k) ? null : k;
+      renderTestB(story);
+    };
+  });
+  document.querySelectorAll('[data-chip]').forEach(el => {
+    el.onclick = () => {
+      if (!state.bSel){ toast('先点一个空位，再点词'); return; }
+      state.bAnswers[state.bSel] = el.dataset.chip;
+      state.bSel = null;
+      renderTestB(story);
+    };
+  });
+  $('#submitB').onclick = () => gradeB(story);
+}
+
+/* ───────────────────────── 判分 ───────────────────────── */
+function gradeB(story){
+  let right = 0; const wrong = [];
+  story.fills.forEach((f,i) => f.a.forEach((ans,j) => {
+    const got = state.bAnswers[i+':'+j] || '';
+    if (got.toLowerCase() === ans.toLowerCase()) right++;
+    else wrong.push(ans);
+  }));
+  const total = story.fills.reduce((n,f) => n + f.a.length, 0);
+
+  const forgot = story.cards.filter((_,i) => state.aResults[i] === 'forgot').map(c => c[0]);
+  const fuzzy  = story.cards.filter((_,i) => state.aResults[i] === 'fuzzy').map(c => c[0]);
+  const known  = story.cards.filter((_,i) => state.aResults[i] === 'known').map(c => c[0]);
+
+  const bad = [...new Set([...forgot, ...fuzzy, ...wrong])];
+  const plan = bad.map(w => ({w, d: forgot.includes(w) ? 1 : (fuzzy.includes(w) ? 3 : 1)}))
+                  .sort((a,b) => a.d - b.d);
+
+  const t = today();
+  if (!t.done.includes(story.id)) t.done.push(story.id);
+  t.results[story.id] = { at:Date.now(), known, forgot, fuzzy, right, total, plan };
+
+  // 跨天复习池：错词按 1/3/7 天排期
+  db.plan = db.plan || [];
+  plan.forEach(p => db.plan.push({w:p.w, story:story.id, due:dayKey(new Date(Date.now()+p.d*86400000))}));
+  save();
+
+  const p = progress();
+  state.view = 'result';
+  $('#view').innerHTML =
+    '<div class="h2" style="margin-top:0">这篇的结果</div>' +
+    '<div class="score">' +
+      '<div class="sc"><b>' + known.length + '<small style="font-size:14px;color:#8a7a6b">/20</small></b><span>卡片「记得」</span></div>' +
+      '<div class="sc"><b>' + right + '<small style="font-size:14px;color:#8a7a6b">/' + total + '</small></b><span>填空正确</span></div>' +
+    '</div>' +
+    (plan.length
+      ? '<div class="h2">要复习的词（' + plan.length + '）</div><div class="wrongbox">' +
+        plan.map(x => '<div class="wr"><b>' + x.w + '</b><span>' + esc(glossOf(story,x.w)) + '</span><span class="due">' + x.d + ' 天后 · ' + datePlus(x.d) + '</span></div>').join('') +
+        '</div>'
+      : '<div class="h2">全对</div><div class="wrongbox"><div class="wr"><span class="good">这篇没有错词。</span></div></div>') +
+    '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
+      (p.need > 0 ? '今日 ' + p.words + '/100 词，还差 ' + p.need + ' 篇。' : '今日已达标 ' + p.words + '/100 词。') +
+    '</span></div>' +
+    '<div class="hint">复习日期已记在这台设备上。明天打开先做到期词。</div>';
+
+  const nxt = nextStory();
+  $('#bar').innerHTML = nxt
+    ? '<button class="btn" id="nextStory">继续：' + nxt.id + ' ' + esc(nxt.title) + ' →</button>'
+    : '<button class="btn" id="drill">加练今天错的词</button>';
+  if (nxt) $('#nextStory').onclick = () => { resetRun(); renderRead(nxt); };
+  else $('#drill').onclick = () => startDrill();
+}
+
+/* ───────────────────────── 加练（超额 100 词之后） ───────────────────────── */
+function startDrill(){
+  const t = today();
+  const words = [];
+  Object.values(t.results).forEach(r => (r.plan||[]).forEach(p => { if (!words.includes(p.w)) words.push(p.w); }));
+  if (!words.length){ toast('今天没有错词，明天见'); return; }
+  const story = STORIES.find(s => s.id === (t.done[t.done.length-1])) || STORIES[0];
+  const list = words.map(w => {
+    const c = story.cards.find(c => c[0] === w);
+    return c || [w, glossOf(story, w)];
+  });
+  state.aIndex = 0; state.aResults = [];
+  renderTestA(story, list);
+}
+function renderDrillResult(story, cards){
+  const forgot = cards.filter((_,i) => state.aResults[i] === 'forgot').length;
+  const known = cards.length - forgot;
+  state.view = 'result';
+  $('#view').innerHTML =
+    '<div class="h2" style="margin-top:0">加练完成</div>' +
+    '<div class="score"><div class="sc"><b>' + known + '<small style="font-size:14px;color:#8a7a6b">/' + cards.length + '</small></b><span>记得</span></div></div>' +
+    '<div class="hint">加练不计入今日 100 词，只影响记忆调度。</div>';
+  $('#bar').innerHTML = '<button class="btn ghost" id="back">回到故事</button>';
+  $('#back').onclick = () => { const s = nextStory() || STORIES[0]; resetRun(); renderRead(s); };
+}
+
+/* ───────────────────────── 收尾 / 队列 ───────────────────────── */
+function resetRun(){
+  state.aIndex = 0; state.aResults = []; state.revealed = false;
+  state.bAnswers = {}; state.bSel = null; state.bank = null;
+}
+function renderQueue(){
+  const t = today();
+  $('#qlist').innerHTML = STORIES.map(s => {
+    const done = t.done.includes(s.id);
+    return '<div class="qrow' + (done ? ' todo' : '') + '"><span class="qid">' + s.id + '</span><span>' + esc(s.title) + '</span><span class="st">' + (done ? '已测试' : '未开始') + '</span></div>';
+  }).join('');
+  const p = progress();
+  $('#qsub').textContent = dayKey() + ' · ' + p.words + '/100 词 · 已完成 ' + p.done.length + '/' + GOAL_STORIES + ' 篇';
+}
+
+$('#queueBtn').onclick = () => { renderQueue(); $('#sheet').classList.add('open'); };
+$('#sheet').onclick = (e) => { if (e.target.id === 'sheet') $('#sheet').classList.remove('open'); };
+
+/* 朗读：整篇逐句读，读哪段就亮哪段 */
+function onListen(){
+  if (state.view !== 'read'){ toast('先回到故事页'); return; }
+  const btn = $('#listenBtn');
+  if (state.speaking){ stopSpeech(); if (btn) btn.classList.remove('on'); return; }
+  if (!('speechSynthesis' in window)){ toast('这个浏览器没有语音合成'); return; }
+  state.speaking = true;
+  if (btn) btn.classList.add('on');
+  const story = state.story;
+  const paras = story.paras.map(p => p.replace(/\{[A-Za-z]+\}/g, w => w.slice(1,-1)));
+  const nodes = document.querySelectorAll('p.para');
+  let pi = 0;
+  function nextPara(){
+    if (!state.speaking || pi >= paras.length){ stopSpeech(); if ($('#listenBtn')) $('#listenBtn').classList.remove('on'); return; }
+    if (!nodes[pi]) { stopSpeech(); return; }
+    nodes.forEach(n => n.classList.remove('speaking'));
+    nodes[pi].classList.add('speaking');
+    const sentences = paras[pi].split(/(?<=[.!?])\s+/).filter(Boolean);
+    let si = 0;
+    function nextSent(){
+      if (!state.speaking || si >= sentences.length){ pi++; nextPara(); return; }
+      const u = utter(sentences[si], 0.95, accentOf());
+      u.onend = () => { si++; setTimeout(nextSent, 180); };
+      window.speechSynthesis.speak(u);
+    }
+    nextSent();
+  }
+  window.speechSynthesis.cancel();
+  nextPara();
+}
+
+/* 口音开关 */
+function paintAccent(){
+  document.querySelectorAll('#accentSeg button').forEach(b => b.classList.toggle('on', b.dataset.accent === accentOf()));
+}
+document.querySelectorAll('#accentSeg button').forEach(b => {
+  b.onclick = () => { db.accent = b.dataset.accent; save(); paintAccent(); speak(b.dataset.accent === 'uk' ? 'This is British English.' : 'This is American English.', b.dataset.accent); };
+});
+paintAccent();
+
+/* 事件委托：点词 / 喇叭发音；点段末喇叭整段读 */
+document.addEventListener('click', (e) => {
+  const spk = e.target.closest('[data-spk]');
+  if (spk){ e.stopPropagation(); speak(spk.dataset.spk, spk.dataset.accent); return; }
+  const w = e.target.closest('.w');
+  if (w && state.view === 'read') speak(w.dataset.w, accentOf());
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopSpeech(); });
+
+/* 启动 */
+const first = nextStory();
+if (first){ renderRead(first); }
+else { renderRead(STORIES[STORIES.length-1]); }
+</script>
+</body>
+</html>
