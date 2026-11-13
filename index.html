@@ -122,6 +122,12 @@
   .zhbox summary::before{content:'▸ ';color:var(--accent)}
   .zhbox[open] summary::before{content:'▾ '}
   .zhbox p{margin:10px 0 2px;font-size:15px;line-height:1.8;color:var(--text)}
+  .bar2{display:flex;gap:10px}
+  .bar2 .btn{flex:1}
+  .libjump{width:100%;appearance:none;border:1px solid rgba(232,131,74,.5);background:rgba(232,131,74,.12);color:#f6c9a8;border-radius:12px;padding:11px 12px;font-size:13.5px;text-align:left;cursor:pointer;margin-bottom:10px}
+  .qrow.lib{cursor:pointer}
+  .qrow.lib:active{background:rgba(232,131,74,.08)}
+  .banner.review{background:rgba(110,150,210,.12);border:1px solid rgba(110,150,210,.35);color:#c9d8f6}
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#332b24;color:#f6ecdf;border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-size:13px;z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;max-width:80vw;text-align:center}
   .toast.show{opacity:1}
 </style>
@@ -147,7 +153,7 @@
 
 <div class="sheet" id="sheet">
   <div class="in">
-    <h3>今日队列</h3>
+    <h3>故事书架</h3>
     <div class="sub" id="qsub"></div>
     <div id="qlist"></div>
     <div class="hint" style="margin-top:8px">右上角「美音 / 英音」切换口音；手机没装对应语音包时会退回另一种。</div>
@@ -3662,7 +3668,7 @@ const STORIES = [
 /* ==DATA-END== */
 
 /* ───────────────────────── 状态 ───────────────────────── */
-const BUILD = '2026-10-29 · v4 · 10 篇';
+const BUILD = '2026-11-13 · v5 · 进度自动保存 + 书架';
 const KEY = 'vs.story.v2';
 const store = {
   failed:false,
@@ -3676,6 +3682,10 @@ const store = {
 };
 const db = store.read();
 db.days = db.days || {};
+db.seen = db.seen || {};
+db.done = db.done || {};
+db.review = db.review || {};
+
 function dayKey(d){ d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function today(){
   const k = dayKey();
@@ -3684,15 +3694,45 @@ function today(){
 }
 function save(){ store.write(db); }
 
+/* 老版本升级：按今天已经做完的篇数补上游标，避免重复读第一篇 */
+if (typeof db.cursor !== 'number'){
+  const doneToday = today().done || [];
+  const last = doneToday[doneToday.length - 1];
+  const i = last ? STORIES.findIndex(x => x.id === last) : -1;
+  db.cursor = i >= 0 ? i + 1 : 0;
+  save();
+}
+
 const state = {
-  view:'read',
+  mode:'today',            // today | review
   story:null,
+  view:'read',             // read | testA | testB | result | done
   showGloss:true,
   aIndex:0, aResults:[], revealed:false,
   bAnswers:{}, bSel:null, bank:null,
-  drill:null,
+  drillList:null,
   speaking:false
 };
+
+/* 会话快照：每走一步都落盘，退出再打开会回到原处 */
+function saveSession(){
+  if (!state.story) return;
+  if (state.view === 'result' || state.view === 'done'){ return; }
+  db.session = {
+    storyId: state.story.id,
+    mode: state.mode,
+    view: state.view,
+    aIndex: state.aIndex,
+    aResults: state.aResults,
+    revealed: state.revealed,
+    bAnswers: state.bAnswers,
+    bank: state.bank,
+    bSel: state.bSel,
+    at: Date.now()
+  };
+  save();
+}
+function clearSession(){ db.session = null; save(); }
 
 /* ───────────────────────── 发音 ───────────────────────── */
 let voices = [];
@@ -3754,34 +3794,36 @@ function glossOf(story, key){
 }
 function datePlus(n){ const d = new Date(); d.setDate(d.getDate()+n); return (d.getMonth()+1)+'月'+d.getDate()+'日'; }
 
-/* ───────────────────────── 今日进度 ───────────────────────── */
+/* ───────────────────────── 进度 ───────────────────────── */
 function progress(){
   const t = today();
   const done = t.done.filter(id => STORIES.some(s => s.id === id));
   return { done, words: done.length * 20, need: Math.max(0, GOAL_STORIES - done.length) };
 }
-function nextStory(){
-  const c = db.cursor || 0;
-  return c < STORIES.length ? STORIES[c] : null;
-}
+function cursorStory(){ return STORIES[db.cursor] || null; }
 
-/* ───────────────────────── 顶栏 ───────────────────────── */
 function paintHead(story){
   $('#sbadge').textContent = story ? story.id : '✓';
-  $('#stitle').textContent = story ? story.title : '今日已完成';
+  $('#stitle').textContent = story ? story.title : '书架';
 }
 
 /* ───────────────────────── 阅读 ───────────────────────── */
 function renderRead(story){
   state.view = 'read';
   state.story = story;
+  if (state.mode !== 'review') db.seen[story.id] = true;
   paintHead(story);
   document.body.classList.toggle('hidegloss', !state.showGloss);
 
   const p = progress();
-  const banner = p.need > 0
-    ? '<div class="banner warn"><span>今天还差 <b>' + p.need + '</b> 篇（' + (p.need*20) + ' 词）就满 100。已完成 ' + p.done.length + '/' + GOAL_STORIES + ' 篇。</span></div>'
-    : '<div class="banner done"><span>今日已达标：' + p.words + '/100 词（' + p.done.length + ' 篇）。想加练可以继续。</span></div>';
+  let banner;
+  if (state.mode === 'review'){
+    banner = '<div class="banner review"><span>复习模式 · 重读旧文不会打乱今天的顺序</span></div>';
+  } else if (p.need > 0){
+    banner = '<div class="banner warn"><span>今天还差 <b>' + p.need + '</b> 篇（' + (p.need*20) + ' 词）就满 100。已完成 ' + p.done.length + '/' + GOAL_STORIES + ' 篇。</span></div>';
+  } else {
+    banner = '<div class="banner done"><span>今日已达标：' + p.words + '/100 词（' + p.done.length + ' 篇）。想加练可以继续。</span></div>';
+  }
 
   const body = story.paras.map(para => '<p class="para">' + para.replace(/\{([A-Za-z]+)\}/g, (_, k) =>
     '<span class="w" data-w="' + k + '">' + k + '</span>' +
@@ -3796,18 +3838,31 @@ function renderRead(story){
     '</div>' +
     '<div class="lede">' + esc(story.meta) + ' · 点词听发音（口音看右上角）</div>' +
     body +
-    '<div class="hint">' + (p.need > 0 ? '读完这篇还有 ' + (p.need-1) + ' 篇。' : '今日任务完成，剩下的时间算加练。') + '</div>';
+    '<div class="hint">' + (state.mode === 'review' ? '这篇已经读过，重读不影响进度。' : (p.need > 0 ? '读完这篇还有 ' + (p.need-1) + ' 篇。' : '今日任务完成，剩下的时间算加练。')) + '</div>';
 
   $('#listenBtn').onclick = onListen;
   $('#glossBtn').onclick = () => { state.showGloss = !state.showGloss; renderRead(story); };
 
-  $('#bar').innerHTML = '<button class="btn" id="goTest">读完了，考我 →</button>';
-  $('#goTest').onclick = () => { state.aIndex = 0; state.aResults = []; state.revealed = false; state.bAnswers = {}; state.bSel = null; state.bank = null; renderTestA(story); };
+  if (state.mode === 'review'){
+    $('#bar').innerHTML = '<div class="bar2">' +
+      '<button class="btn ghost" id="backToday">回到今天</button>' +
+      '<button class="btn" id="goTest">考我 →</button></div>';
+    $('#backToday').onclick = () => { resetRun(); openStory(cursorStory() ? cursorStory().id : STORIES[0].id, 'today'); };
+  } else {
+    $('#bar').innerHTML = '<button class="btn" id="goTest">读完了，考我 →</button>';
+  }
+  $('#goTest').onclick = () => {
+    state.aIndex = 0; state.aResults = []; state.revealed = false;
+    state.bAnswers = {}; state.bSel = null; state.bank = null;
+    renderTestA(story);
+  };
+  saveSession();
 }
 
 /* ───────────────────────── 卡片回忆 ───────────────────────── */
 function renderTestA(story, list){
   state.view = 'testA';
+  state.story = story;
   document.body.classList.add('hidegloss');
   const cards = list || story.cards;
   const [word, zh] = cards[state.aIndex];
@@ -3852,11 +3907,13 @@ function renderTestA(story, list){
       };
     });
   }
+  if (!list) saveSession();
 }
 
 /* ───────────────────────── 句子填空 ───────────────────────── */
 function renderTestB(story){
   state.view = 'testB';
+  state.story = story;
   document.body.classList.add('hidegloss');
   const blanks = [];
   story.fills.forEach((f,i) => f.a.forEach((_,j) => blanks.push(i+':'+j)));
@@ -3897,6 +3954,7 @@ function renderTestB(story){
     };
   });
   $('#submitB').onclick = () => gradeB(story);
+  saveSession();
 }
 
 /* ───────────────────────── 判分 ───────────────────────── */
@@ -3917,21 +3975,30 @@ function gradeB(story){
   const plan = bad.map(w => ({w, d: forgot.includes(w) ? 1 : (fuzzy.includes(w) ? 3 : 1)}))
                   .sort((a,b) => a.d - b.d);
 
-  const t = today();
-  if (!t.done.includes(story.id)) t.done.push(story.id);
   const idx = STORIES.findIndex(x => x.id === story.id);
-  if (idx >= 0 && idx + 1 > (db.cursor || 0)) db.cursor = idx + 1;
-  t.results[story.id] = { at:Date.now(), known, forgot, fuzzy, right, total, plan };
+  const isTodayFlow = state.mode === 'today' && db.cursor === idx;
+  const rec = { at:Date.now(), known, forgot, fuzzy, right, total, plan };
 
-  // 跨天复习池：错词按 1/3/7 天排期
+  if (isTodayFlow){
+    const t = today();
+    if (!t.done.includes(story.id)) t.done.push(story.id);
+    t.results[story.id] = rec;
+    db.cursor = idx + 1;
+  } else {
+    db.review[story.id] = rec;
+  }
+  db.done[story.id] = rec.at;
+
   db.plan = db.plan || [];
   plan.forEach(p => db.plan.push({w:p.w, story:story.id, due:dayKey(new Date(Date.now()+p.d*86400000))}));
-  save();
+
+  state.view = 'result';
+  clearSession();
 
   const p = progress();
-  state.view = 'result';
+  const next = STORIES[db.cursor];
   $('#view').innerHTML =
-    '<div class="h2" style="margin-top:0">这篇的结果</div>' +
+    '<div class="h2" style="margin-top:0">' + (isTodayFlow ? '这篇的结果' : '复习结果（不计入今天）') + '</div>' +
     '<div class="score">' +
       '<div class="sc"><b>' + known.length + '<small style="font-size:14px;color:#8a7a6b">/20</small></b><span>卡片「记得」</span></div>' +
       '<div class="sc"><b>' + right + '<small style="font-size:14px;color:#8a7a6b">/' + total + '</small></b><span>填空正确</span></div>' +
@@ -3942,65 +4009,133 @@ function gradeB(story){
         '</div>'
       : '<div class="h2">全对</div><div class="wrongbox"><div class="wr"><span class="good">这篇没有错词。</span></div></div>') +
     (story.zh ? '<details class="zhbox"><summary>中文大意（做完才解锁喵）</summary><p>' + esc(story.zh) + '</p></details>' : '') +
-    '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
-      (p.need > 0 ? '今日 ' + p.words + '/100 词，还差 ' + p.need + ' 篇。' : '今日已达标 ' + p.words + '/100 词。') +
-    '</span></div>' +
-    '<div class="hint">复习日期已记在这台设备上。明天打开先做到期词。</div>';
+    (isTodayFlow
+      ? '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
+          (p.need > 0 ? '今日 ' + p.words + '/100 词，还差 ' + p.need + ' 篇。' : '今日已达标 ' + p.words + '/100 词。') +
+        '</span></div>'
+      : '') +
+    '<div class="hint">进度已经存在这台设备上，随时关掉都不会丢。</div>';
 
-  const nxt = nextStory();
-  $('#bar').innerHTML = nxt
-    ? '<button class="btn" id="nextStory">继续：' + nxt.id + ' ' + esc(nxt.title) + ' →</button>'
-    : '<button class="btn" id="drill">加练今天错的词</button>';
-  if (nxt) $('#nextStory').onclick = () => { resetRun(); renderRead(nxt); };
-  else $('#drill').onclick = () => startDrill();
+  if (isTodayFlow && next){
+    $('#bar').innerHTML = '<button class="btn" id="nextStory">继续：' + next.id + ' ' + esc(next.title) + ' →</button>';
+    $('#nextStory').onclick = () => { resetRun(); state.mode='today'; renderRead(next); };
+  } else {
+    $('#bar').innerHTML = '<button class="btn" id="toShelf">打开书架</button>';
+    $('#toShelf').onclick = () => openLibrary();
+  }
 }
 
-/* ───────────────────────── 加练（超额 100 词之后） ───────────────────────── */
+/* ───────────────────────── 加练（错词） ───────────────────────── */
 function startDrill(){
   const t = today();
   const words = [];
   Object.values(t.results).forEach(r => (r.plan||[]).forEach(p => { if (!words.includes(p.w)) words.push(p.w); }));
   if (!words.length){ toast('今天没有错词，明天见'); return; }
   const story = STORIES.find(s => s.id === (t.done[t.done.length-1])) || STORIES[0];
-  const list = words.map(w => {
-    const c = story.cards.find(c => c[0] === w);
-    return c || [w, glossOf(story, w)];
-  });
-  state.aIndex = 0; state.aResults = [];
+  const list = words.map(w => story.cards.find(c => c[0] === w) || [w, glossOf(story, w)]);
+  state.aIndex = 0; state.aResults = []; state.revealed = false;
   renderTestA(story, list);
 }
 function renderDrillResult(story, cards){
   const forgot = cards.filter((_,i) => state.aResults[i] === 'forgot').length;
   const known = cards.length - forgot;
   state.view = 'result';
+  clearSession();
   $('#view').innerHTML =
     '<div class="h2" style="margin-top:0">加练完成</div>' +
     '<div class="score"><div class="sc"><b>' + known + '<small style="font-size:14px;color:#8a7a6b">/' + cards.length + '</small></b><span>记得</span></div></div>' +
     '<div class="hint">加练不计入今日 100 词，只影响记忆调度。</div>';
-  $('#bar').innerHTML = '<button class="btn ghost" id="back">回到故事</button>';
-  $('#back').onclick = () => { const s = nextStory() || STORIES[0]; resetRun(); renderRead(s); };
+  $('#bar').innerHTML = '<button class="btn ghost" id="toShelf">打开书架</button>';
+  $('#toShelf').onclick = () => openLibrary();
 }
 
-/* ───────────────────────── 收尾 / 队列 ───────────────────────── */
+/* ───────────────────────── 书架 ───────────────────────── */
+function openStory(id, mode){
+  const st = STORIES.find(s => s.id === id);
+  if (!st) return;
+  resetRun();
+  state.mode = mode || 'today';
+  $('#sheet').classList.remove('open');
+  renderRead(st);
+}
+
+function renderLibrary(){
+  const t = today();
+  const cur = cursorStory();
+  const rows = STORIES.map((s,i) => {
+    const isDone = db.cursor > i || db.done[s.id];
+    const isCur = cur && cur.id === s.id;
+    const st = isCur ? '今天' : (isDone ? '已读' : '未读');
+    return '<div class="qrow lib" data-open="' + s.id + '" data-mode="' + (isDone && !isCur ? 'review' : 'today') + '">' +
+      '<span class="qid">' + s.id + '</span><span>' + esc(s.title) + '</span>' +
+      '<span class="st">' + st + '</span></div>';
+  }).join('');
+
+  const p = progress();
+  $('#qlist').innerHTML =
+    (cur ? '<button class="libjump" id="jumpToday">继续今天：' + cur.id + ' ' + esc(cur.title) + ' →</button>' : '') +
+    rows;
+  $('#qsub').textContent = dayKey() + ' · 今日 ' + p.words + '/100 词 · 共 ' + STORIES.length + ' 篇 · ' + BUILD;
+
+  document.querySelectorAll('[data-open]').forEach(el => {
+    el.onclick = () => openStory(el.dataset.open, el.dataset.mode);
+  });
+  if ($('#jumpToday')) $('#jumpToday').onclick = () => openStory(cur.id, 'today');
+}
+
+function openLibrary(){
+  renderLibrary();
+  $('#sheet').classList.add('open');
+}
+
+function renderDone(){
+  state.view = 'done';
+  paintHead(null);
+  clearSession();
+  const p = progress();
+  const t = today();
+  const rows = Object.keys(t.results).map(id => {
+    const r = t.results[id]; const st = STORIES.find(x => x.id === id);
+    return '<div class="wr"><b>' + id + '</b><span>' + (st ? st.title : '') + ' · 记得 ' + ((r.known||[]).length) + '/20 · 填空 ' + r.right + '/' + r.total + '</span></div>';
+  }).join('') || '<div class="wr"><span>今天还没有记录。</span></div>';
+
+  $('#view').innerHTML =
+    '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
+      (p.need > 0 ? '今天已读 ' + p.words + '/100 词。后面的故事还没写进来。' : '今日已达标：' + p.words + '/100 词，' + GOAL_STORIES + ' 篇。') +
+    '</span></div>' +
+    '<div class="h2">故事读完了喵</div>' +
+    '<div class="hint">这一批都做过了。新的 5 篇要我写好、更新后才会出现；在那之前可以重读旧文或者加练错词。</div>' +
+    '<div class="wrongbox" style="margin-top:18px">' + rows + '</div>';
+
+  $('#bar').innerHTML = '<div class="bar2">' +
+    '<button class="btn ghost" id="drill">加练错词</button>' +
+    '<button class="btn" id="toShelf">打开书架</button></div>';
+  $('#drill').onclick = () => startDrill();
+  $('#toShelf').onclick = () => openLibrary();
+}
+
+/* ───────────────────────── 通用 ───────────────────────── */
 function resetRun(){
   state.aIndex = 0; state.aResults = []; state.revealed = false;
-  state.bAnswers = {}; state.bSel = null; state.bank = null;
-}
-function renderQueue(){
-  const t = today();
-  const c = db.cursor || 0;
-  $('#qlist').innerHTML = STORIES.map((s,i) => {
-    const st = i < c ? '已读' : (i === c ? '下一篇' : '未读');
-    return '<div class="qrow' + (i < c ? ' todo' : '') + '"><span class="qid">' + s.id + '</span><span>' + esc(s.title) + '</span><span class="st">' + st + '</span></div>';
-  }).join('');
-  const p = progress();
-  $('#qsub').textContent = dayKey() + ' · 今日 ' + p.words + '/100 词 · 库里还有 ' + Math.max(0, STORIES.length - c) + ' 篇 · ' + BUILD;
+  state.bAnswers = {}; state.bSel = null; state.bank = null; state.drillList = null;
 }
 
-$('#queueBtn').onclick = () => { renderQueue(); $('#sheet').classList.add('open'); };
+$('#queueBtn').onclick = () => openLibrary();
 $('#sheet').onclick = (e) => { if (e.target.id === 'sheet') $('#sheet').classList.remove('open'); };
 
-/* 朗读：整篇逐句读，读哪段就亮哪段 */
+/* 口音开关 */
+function paintAccent(){
+  document.querySelectorAll('#accentSeg button').forEach(b => b.classList.toggle('on', b.dataset.accent === accentOf()));
+}
+document.querySelectorAll('#accentSeg button').forEach(b => {
+  b.onclick = () => {
+    db.accent = b.dataset.accent; save(); paintAccent();
+    speak(b.dataset.accent === 'uk' ? 'This is British English.' : 'This is American English.', b.dataset.accent);
+  };
+});
+paintAccent();
+
+/* 朗读：整篇逐句读，读哪段亮哪段 */
 function onListen(){
   if (state.view !== 'read'){ toast('先回到故事页'); return; }
   const btn = $('#listenBtn');
@@ -4031,16 +4166,7 @@ function onListen(){
   nextPara();
 }
 
-/* 口音开关 */
-function paintAccent(){
-  document.querySelectorAll('#accentSeg button').forEach(b => b.classList.toggle('on', b.dataset.accent === accentOf()));
-}
-document.querySelectorAll('#accentSeg button').forEach(b => {
-  b.onclick = () => { db.accent = b.dataset.accent; save(); paintAccent(); speak(b.dataset.accent === 'uk' ? 'This is British English.' : 'This is American English.', b.dataset.accent); };
-});
-paintAccent();
-
-/* 事件委托：点词 / 喇叭发音；点段末喇叭整段读 */
+/* 点词 / 喇叭发音 */
 document.addEventListener('click', (e) => {
   const spk = e.target.closest('[data-spk]');
   if (spk){ e.stopPropagation(); speak(spk.dataset.spk, spk.dataset.accent); return; }
@@ -4049,41 +4175,31 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) stopSpeech(); });
 
-/* 库里没有新故事了 */
-function renderDone(){
-  state.view = 'done';
-  paintHead(null);
-  const p = progress();
-  const t = today();
-  const rows = Object.keys(t.results).map(id => {
-    const r = t.results[id]; const st = STORIES.find(x => x.id === id);
-    return '<div class="wr"><b>' + id + '</b><span>' + (st ? st.title : '') + ' · 记得 ' + ((r.known||[]).length) + '/20 · 填空 ' + r.right + '/' + r.total + '</span></div>';
-  }).join('') || '<div class="wr"><span>今天还没有记录。</span></div>';
-  $('#view').innerHTML =
-    (story.zh ? '<details class="zhbox"><summary>中文大意（做完才解锁喵）</summary><p>' + esc(story.zh) + '</p></details>' : '') +
-    '<div class="banner ' + (p.need > 0 ? 'warn' : 'done') + '"><span>' +
-      (p.need > 0 ? '今天已读 ' + p.words + '/100 词。后面的故事还没写进来。' : '今日已达标：' + p.words + '/100 词，' + GOAL_STORIES + ' 篇。') +
-    '</span></div>' +
-    '<div class="h2">故事读完了喵</div>' +
-    '<div class="hint">这一批故事都做过了。新的 5 篇要我写好、上传后才会出现喵；在那之前可以加练今天错的词。</div>' +
-    '<div class="wrongbox" style="margin-top:18px">' + rows + '</div>';
-  $('#bar').innerHTML = '<button class="btn" id="drill">加练今天错的词</button>';
-  $('#drill').onclick = () => startDrill();
-}
+/* ───────────────────────── 启动：优先恢复上次的位置 ───────────────────────── */
+(function boot(){
+  const s = db.session;
+  if (s && s.storyId){
+    const st = STORIES.find(x => x.id === s.storyId);
+    if (st){
+      state.mode = s.mode === 'review' ? 'review' : 'today';
+      state.story = st;
+      state.aIndex = s.aIndex || 0;
+      state.aResults = s.aResults || [];
+      state.revealed = !!s.revealed;
+      state.bAnswers = s.bAnswers || {};
+      state.bank = s.bank || null;
+      state.bSel = s.bSel || null;
+      if (s.view === 'testA'){ renderTestA(st); return; }
+      if (s.view === 'testB'){ renderTestB(st); return; }
+      renderRead(st);
+      return;
+    }
+  }
+  const cur = cursorStory();
+  if (cur){ state.mode = 'today'; renderRead(cur); }
+  else renderDone();
+})();
 
-/* 老版本升级上来：按今天已经做完的篇数把游标补上，避免重复读第一篇 */
-if (typeof db.cursor !== 'number'){
-  const doneToday = today().done || [];
-  const last = doneToday[doneToday.length - 1];
-  const i = last ? STORIES.findIndex(x => x.id === last) : -1;
-  db.cursor = i >= 0 ? i + 1 : 0;
-  save();
-}
-
-/* 启动 */
-const first = nextStory();
-if (first){ renderRead(first); }
-else { renderDone(); }
 </script>
 </body>
 </html>
